@@ -1,0 +1,5 @@
+*.coffee
+.eslintrc.*
+example/
+index.html
+screenshots/

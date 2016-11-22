@@ -1,0 +1,29 @@
+{
+  "name": "phaser-plugin-advanced-timing",
+  "description": "Shows FPS, frame intervals, and performance info",
+  "main": "index.js",
+  "authors": [
+    "samme"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/samme/phaser-plugin-advanced-timing",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "*.coffee",
+    "example",
+    "index.js",
+    "screenshots"
+  ],
+  "dependencies": {
+    "phaser": "^2.6.2"
+  },
+  "keywords": [
+    "phaser",
+    "phaser-plugin"
+  ]
+}
