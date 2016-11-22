@@ -3,18 +3,22 @@ Phaser Advanced Timing Plugin
 
 Shows FPS, frame intervals, and performance info.
 
-    game.plugins.add( Phaser.Plugin.AdvancedTiming );
+```javascript
+game.plugins.add(Phaser.Plugin.AdvancedTiming);
 
-    // Configure (optional)
+// Configure (optional)
 
-    game.plugins.add(Phaser.Plugin.AdvancedTiming, {mode: 'graph'});
+game.plugins.add(Phaser.Plugin.AdvancedTiming, {mode: 'graph'});
 
-    // Save a reference (optional)
+// Save a reference (optional)
 
-    var plugin = game.plugins.add(Phaser.Plugin.AdvancedTiming);
+var plugin = game.plugins.add(Phaser.Plugin.AdvancedTiming);
+```
 
 Graph
 -----
+
+![Graph Mode](https://samme.github.io/phaser-plugin-advanced-timing/screenshots/graph.png)
 
     plugin.mode = 'graph';
 
@@ -29,6 +33,8 @@ Plots values for the last 60 updates:
 Meter
 -----
 
+![Meter Mode](https://samme.github.io/phaser-plugin-advanced-timing/screenshots/meter.png)
+
     plugin.mode = 'meter';
 
 Shows FPS (blue) and frame intervals (yellow).
@@ -36,14 +42,18 @@ Shows FPS (blue) and frame intervals (yellow).
 Text
 ----
 
+![Text Mode](https://samme.github.io/phaser-plugin-advanced-timing/screenshots/text.png)
+
     plugin.mode = 'text'; // (default mode)
 
 Shows game FPS.
 
-gameInfo()
-----------
+gameInfo(), gameTimeInfo()
+--------------------------
 
-    game.debug.gameInfo(x, y)
+![debug.gameInfo() and debug.gameTimeInfo() output](https://samme.github.io/phaser-plugin-advanced-timing/screenshots/debug.png)
+
+`game.debug.gameInfo(x, y)`
 
 prints
 
@@ -54,10 +64,7 @@ prints
   - game.spiraling
   - game.updatesThisFrame
 
-gameTimeInfo()
---------------
-
-    game.debug.gameTimeInfo(x, y)
+`game.debug.gameTimeInfo(x, y)`
 
 prints
 
