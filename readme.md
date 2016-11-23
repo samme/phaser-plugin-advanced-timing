@@ -28,7 +28,7 @@ Plots values for the last 60 updates:
   - elapsed          (green)
   - elapsedMS        (yellow)
   - spiraling        (red)
-  - updatesThisFrame (dark blue; only when forceSingleUpdate is off)
+  - updatesThisFrame (dark blue; only when [forceSingleUpdate][1] is off)
 
 Meter
 -----
@@ -37,7 +37,7 @@ Meter
 
     plugin.mode = 'meter';
 
-Shows FPS (blue) and frame intervals (yellow).
+Shows FPS (blue) and frame intervals (yellow: elapsedMS; green: elapsed).
 
 Text
 ----
@@ -53,9 +53,7 @@ gameInfo(), gameTimeInfo()
 
 ![debug.gameInfo() and debug.gameTimeInfo() output](https://samme.github.io/phaser-plugin-advanced-timing/screenshots/debug.png)
 
-`game.debug.gameInfo(x, y)`
-
-prints
+`game.debug.gameInfo(x, y)` prints
 
   - game.forceSingleUpdate
   - game.lastCount
@@ -64,9 +62,7 @@ prints
   - game.spiraling
   - game.updatesThisFrame
 
-`game.debug.gameTimeInfo(x, y)`
-
-prints
+`game.debug.gameTimeInfo(x, y)` prints
 
   - game.time.desiredFps
   - game.time.elapsed
@@ -75,3 +71,5 @@ prints
   - game.time.physicsElapsedMS
   - game.time.slowMotion
   - game.time.suggestedFps
+
+[1]: http://phaser.io/docs/2.6.2/Phaser.Game.html#forceSingleUpdate
