@@ -48,10 +48,10 @@ Text
 
 Shows game FPS.
 
-gameInfo(), gameTimeInfo()
---------------------------
-
 ![debug.gameInfo() and debug.gameTimeInfo() output](https://samme.github.io/phaser-plugin-advanced-timing/screenshots/debug.png)
+
+Game Loop
+---------
 
 `game.debug.gameInfo(x, y)` prints
 
@@ -62,12 +62,15 @@ gameInfo(), gameTimeInfo()
   - game.spiraling
   - game.updatesThisFrame
 
+Game Clock
+----------
+
 `game.debug.gameTimeInfo(x, y)` prints
 
   - game.time.desiredFps
-  - game.time.elapsed
+  - game.time.elapsed (and range)
   - game.time.elapsedMS
-  - game.time.fps
+  - game.time.fps (and range)
   - game.time.physicsElapsedMS
   - game.time.slowMotion
   - game.time.suggestedFps
