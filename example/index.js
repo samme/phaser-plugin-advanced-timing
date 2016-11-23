@@ -35,9 +35,12 @@
   };
 
   gameGui = function(game, gui) {
+    gui.add(game, "disableStep");
+    gui.add(game, "enableStep");
     gui.add(game, "forceSingleUpdate");
     gui.add(game, "lockRender");
     gui.add(game, "paused");
+    gui.add(game, "step");
     return gui;
   };
 
