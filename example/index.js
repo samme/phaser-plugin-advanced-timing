@@ -66,8 +66,10 @@
   pluginGui = function(plugin, gui) {
     var constructor;
     constructor = plugin.constructor;
+    gui.add(plugin, "active");
     gui.add(plugin, "mode", constructor.modes);
     gui.add(plugin, "reset");
+    gui.add(plugin, "visible");
     return gui;
   };
 

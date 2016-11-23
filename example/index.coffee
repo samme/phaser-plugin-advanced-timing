@@ -47,8 +47,10 @@ gameTimeGui = (time, gui) ->
 
 pluginGui = (plugin, gui) ->
   {constructor} = plugin
+  gui.add plugin, "active"
   gui.add plugin, "mode", constructor.modes
   gui.add plugin, "reset"
+  gui.add plugin, "visible"
   gui
 
 @GAME = new Phaser.Game(
