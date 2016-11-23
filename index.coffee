@@ -178,12 +178,12 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
     {debug} = game
 
     debug.start x, y, color
-    debug.line "forceSingleUpdate:  #{game.forceSingleUpdate}"
-    debug.line "lastCount:          #{game._lastCount}"
-    debug.line "lockRender:         #{game.lockRender}"
     debug.line "renderType:         #{@renderType}"
-    debug.line "spiraling:          #{game._spiraling}"
+    debug.line "lockRender:         #{game.lockRender}"
+    debug.line "forceSingleUpdate:  #{game.forceSingleUpdate}"
     debug.line "updatesThisFrame:   #{game.updatesThisFrame}"
+    debug.line "lastCount:          #{game._lastCount}"
+    debug.line "spiraling:          #{game._spiraling}"
     debug.stop()
 
     return
@@ -193,13 +193,13 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
     {debug, time} = game
 
     debug.start x, y, color
+    debug.line "fps:                #{time.fps} #{@fpsRangeStr()}"
     debug.line "desiredFps:         #{time.desiredFps}"
+    debug.line "suggestedFps:       #{time.suggestedFps}"
     debug.line "elapsed:            #{time.elapsed} ms #{@elapsedRangeStr()}"
     debug.line "elapsedMS:          #{time.elapsedMS} ms"
-    debug.line "fps:                #{time.fps} #{@fpsRangeStr()}"
     debug.line "physicsElapsedMS:   #{time.physicsElapsedMS.toFixed(2)} ms"
     debug.line "slowMotion:         #{time.slowMotion}"
-    debug.line "suggestedFps:       #{time.suggestedFps}"
     debug.stop()
 
     return

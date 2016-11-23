@@ -226,12 +226,12 @@
       game = this.game;
       debug = game.debug;
       debug.start(x, y, color);
-      debug.line("forceSingleUpdate:  " + game.forceSingleUpdate);
-      debug.line("lastCount:          " + game._lastCount);
-      debug.line("lockRender:         " + game.lockRender);
       debug.line("renderType:         " + this.renderType);
-      debug.line("spiraling:          " + game._spiraling);
+      debug.line("lockRender:         " + game.lockRender);
+      debug.line("forceSingleUpdate:  " + game.forceSingleUpdate);
       debug.line("updatesThisFrame:   " + game.updatesThisFrame);
+      debug.line("lastCount:          " + game._lastCount);
+      debug.line("spiraling:          " + game._spiraling);
       debug.stop();
     };
 
@@ -240,13 +240,13 @@
       game = this.game;
       debug = game.debug, time = game.time;
       debug.start(x, y, color);
+      debug.line("fps:                " + time.fps + " " + (this.fpsRangeStr()));
       debug.line("desiredFps:         " + time.desiredFps);
+      debug.line("suggestedFps:       " + time.suggestedFps);
       debug.line("elapsed:            " + time.elapsed + " ms " + (this.elapsedRangeStr()));
       debug.line("elapsedMS:          " + time.elapsedMS + " ms");
-      debug.line("fps:                " + time.fps + " " + (this.fpsRangeStr()));
       debug.line("physicsElapsedMS:   " + (time.physicsElapsedMS.toFixed(2)) + " ms");
       debug.line("slowMotion:         " + time.slowMotion);
-      debug.line("suggestedFps:       " + time.suggestedFps);
       debug.stop();
     };
 
