@@ -12,7 +12,14 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
   @MODE_DEFAULT = @MODE_TEXT
 
   @colors =
+    AQUA:   "#7FDBFF"
+    BLUE:   "#0074D9"
+    GRAY:   "#666666"
+    GREEN:  "#2ECC40"
+    LIME:   "#01FF70"
+    NAVY:   "#001F3F"
     ORANGE: "#FF851B"
+    PURPLE: "#B10DC9"
     RED:    "#FF4136"
     WHITE:  "#FFFFFF"
     YELLOW: "#FFDC00"
@@ -256,22 +263,22 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
     {forceSingleUpdate, _spiraling, updatesThisFrame} = @game
     {elapsed, elapsedMS, fps} = @game.time
     {graph, graphX} = this
+    {colors} = @constructor
     {height} = graph
 
-    graph
-      .rect @graphX, 0, 1, height, "black"
-      .update()
+    graph.dirty = yes
+    graph.rect graphX, 0, 1, height, "black"
 
     if fps <= height
-      graph.setPixel graphX, (height - fps),              0   , 0x66, 0xff
+      graph.rect graphX, (height - fps),              1, 1, colors.BLUE
     if elapsed <= height
-      graph.setPixel graphX, (height - elapsed),          0   , 0xff, 0x66
+      graph.rect graphX, (height - elapsed),          1, 1, colors.GREEN
     if elapsed isnt elapsedMS and elapsed <= height
-      graph.setPixel graphX, (height - elapsedMS),        0xff, 0xff, 0
+      graph.rect graphX, (height - elapsedMS),        1, 1, colors.YELLOW
     unless forceSingleUpdate
-      graph.setPixel graphX, (height - updatesThisFrame), 0   , 0x33, 0x99
+      graph.rect graphX, (height - updatesThisFrame), 1, 1, colors.NAVY
     if _spiraling > 0
-      graph.setPixel graphX, (height - _spiraling),       0xff, 0x33, 0
+      graph.rect graphX, (height - _spiraling),       1, 1, colors.RED
 
     @graphX += 1
     @graphX %= graph.width

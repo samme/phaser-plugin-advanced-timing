@@ -25,7 +25,14 @@
     AdvancedTimingPlugin.MODE_DEFAULT = AdvancedTimingPlugin.MODE_TEXT;
 
     AdvancedTimingPlugin.colors = {
+      AQUA: "#7FDBFF",
+      BLUE: "#0074D9",
+      GRAY: "#666666",
+      GREEN: "#2ECC40",
+      LIME: "#01FF70",
+      NAVY: "#001F3F",
       ORANGE: "#FF851B",
+      PURPLE: "#B10DC9",
       RED: "#FF4136",
       WHITE: "#FFFFFF",
       YELLOW: "#FFDC00"
@@ -339,26 +346,28 @@
     };
 
     AdvancedTimingPlugin.prototype.updateGraph = function() {
-      var _spiraling, elapsed, elapsedMS, forceSingleUpdate, fps, graph, graphX, height, ref, ref1, updatesThisFrame;
+      var _spiraling, colors, elapsed, elapsedMS, forceSingleUpdate, fps, graph, graphX, height, ref, ref1, updatesThisFrame;
       ref = this.game, forceSingleUpdate = ref.forceSingleUpdate, _spiraling = ref._spiraling, updatesThisFrame = ref.updatesThisFrame;
       ref1 = this.game.time, elapsed = ref1.elapsed, elapsedMS = ref1.elapsedMS, fps = ref1.fps;
       graph = this.graph, graphX = this.graphX;
+      colors = this.constructor.colors;
       height = graph.height;
-      graph.rect(this.graphX, 0, 1, height, "black").update();
+      graph.dirty = true;
+      graph.rect(graphX, 0, 1, height, "black");
       if (fps <= height) {
-        graph.setPixel(graphX, height - fps, 0, 0x66, 0xff);
+        graph.rect(graphX, height - fps, 1, 1, colors.BLUE);
       }
       if (elapsed <= height) {
-        graph.setPixel(graphX, height - elapsed, 0, 0xff, 0x66);
+        graph.rect(graphX, height - elapsed, 1, 1, colors.GREEN);
       }
       if (elapsed !== elapsedMS && elapsed <= height) {
-        graph.setPixel(graphX, height - elapsedMS, 0xff, 0xff, 0);
+        graph.rect(graphX, height - elapsedMS, 1, 1, colors.YELLOW);
       }
       if (!forceSingleUpdate) {
-        graph.setPixel(graphX, height - updatesThisFrame, 0, 0x33, 0x99);
+        graph.rect(graphX, height - updatesThisFrame, 1, 1, colors.NAVY);
       }
       if (_spiraling > 0) {
-        graph.setPixel(graphX, height - _spiraling, 0xff, 0x33, 0);
+        graph.rect(graphX, height - _spiraling, 1, 1, colors.RED);
       }
       this.graphX += 1;
       this.graphX %= graph.width;
