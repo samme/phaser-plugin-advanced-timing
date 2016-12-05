@@ -65,9 +65,6 @@
             this._mode = val;
             this.add();
             this.activeDisplay = this.display[this._mode];
-            if (this.game.debug.graph) {
-              this.game.debug.graph(this.group);
-            }
             break;
           default:
             throw new Error("No such mode: '" + val + "'");
@@ -80,7 +77,7 @@
     AdvancedTimingPlugin.prototype.name = "Advanced Timing Plugin";
 
     AdvancedTimingPlugin.prototype.init = function(options) {
-      var game;
+      var game, mode;
       game = this.game;
       game.time.advancedTiming = true;
       this.group = game.make.group(null, "advancedTimingPlugin", true);
@@ -91,12 +88,12 @@
       game.debug.gameInfo = this.debugGameInfo.bind(this);
       game.debug.gameTimeInfo = this.debugGameTimeInfo.bind(this);
       this.display = {};
-      if (!(options != null ? options.mode : void 0)) {
-        this.mode = this.constructor.MODE_DEFAULT;
-      }
       if (options) {
+        mode = options.mode;
+        delete options.mode;
         Phaser.Utils.extend(this, options);
       }
+      this.mode = mode || this.constructor.MODE_DEFAULT;
     };
 
     AdvancedTimingPlugin.prototype.update = function() {
@@ -143,7 +140,7 @@
     };
 
     AdvancedTimingPlugin.prototype.addGraph = function(x, y) {
-      var desiredFps, desiredMs, height, ref, style, width;
+      var desiredFps, desiredMs, height, ref, scaleY, style, width;
       if (x == null) {
         x = this.position.x;
       }
@@ -157,17 +154,19 @@
         font: "10px monospace"
       };
       this.graphGroup = this.game.add.group(this.group, "advancedTimingPluginGraphGroup");
+      this.graphGroup.x = x;
+      this.graphGroup.y = y;
       this.graph = this.game.make.bitmapData(60, 60, "advancedTimingPluginGraph");
       this.graph.fill(0, 0, 0);
       this.graphX = 0;
-      this.graphImage = this.game.add.image(x, y, this.graph, null, this.graphGroup);
+      this.graphImage = this.game.add.image(0, 0, this.graph, null, this.graphGroup);
       this.graphImage.alpha = this.alpha;
       this.graphImage.scale.set(2);
       this.graphImage.smoothed = false;
       ref = this.graphImage, width = ref.width, height = ref.height;
-      y = this.graphImage.scale.y;
-      this.game.add.text(width, height - y * desiredFps, desiredFps + " fps", style, this.graphGroup);
-      this.game.add.text(width, height - y * desiredMs, desiredMs + " ms", style, this.graphGroup);
+      scaleY = this.graphImage.scale.y;
+      this.game.add.text(width, height - scaleY * desiredFps, desiredFps + " fps", style, this.graphGroup);
+      this.game.add.text(width, height - scaleY * desiredMs, desiredMs + " ms", style, this.graphGroup);
       this.display[this.constructor.MODE_GRAPH] = this.graphGroup;
     };
 

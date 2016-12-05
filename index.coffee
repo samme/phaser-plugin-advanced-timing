@@ -50,8 +50,6 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
           @_mode = val
           @add()
           @activeDisplay = @display[ @_mode ]
-          if @game.debug.graph
-            @game.debug.graph @group
         else
           throw new Error "No such mode: '#{val}'"
       @refresh()
@@ -70,10 +68,11 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
     game.debug.gameInfo = @debugGameInfo.bind this
     game.debug.gameTimeInfo = @debugGameTimeInfo.bind this
     @display = {}
-    unless options?.mode
-      @mode = @constructor.MODE_DEFAULT
     if options
+      {mode} = options
+      delete options.mode
       Phaser.Utils.extend this, options
+    @mode = mode or @constructor.MODE_DEFAULT
     return
 
   update: ->
@@ -104,21 +103,23 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
     style = fill: "white", font: "10px monospace"
 
     @graphGroup = @game.add.group @group, "advancedTimingPluginGraphGroup"
+    @graphGroup.x = x
+    @graphGroup.y = y
 
     @graph = @game.make.bitmapData 60, 60, "advancedTimingPluginGraph"
     @graph.fill 0, 0, 0
 
     @graphX = 0
-    @graphImage = @game.add.image x, y, @graph, null, @graphGroup
+    @graphImage = @game.add.image 0, 0, @graph, null, @graphGroup
     @graphImage.alpha = @alpha
     @graphImage.scale.set 2
     @graphImage.smoothed = no
 
     {width, height} = @graphImage
-    {y} = @graphImage.scale
+    scaleY = @graphImage.scale.y
 
-    @game.add.text width, height - y * desiredFps, "#{desiredFps} fps", style, @graphGroup
-    @game.add.text width, height - y * desiredMs,  "#{desiredMs} ms",   style, @graphGroup
+    @game.add.text width, height - scaleY * desiredFps, "#{desiredFps} fps", style, @graphGroup
+    @game.add.text width, height - scaleY * desiredMs,  "#{desiredMs} ms",   style, @graphGroup
 
     @display[ @constructor.MODE_GRAPH ] = @graphGroup
 
