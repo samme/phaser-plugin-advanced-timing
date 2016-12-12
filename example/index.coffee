@@ -2,7 +2,9 @@
 
 {dat, Phaser} = this
 
-BUNNY_COUNT = 1e4
+{SECOND} = Phaser.Timer
+
+BUNNY_COUNT = 1e3
 BUNNY_LIFESPAN = 4000
 BUNNY_INTERVAL = 100
 BUNNIES_PER_EMIT = 10
@@ -18,6 +20,11 @@ debugSettingsGui = (_debugSettings, gui) ->
 
 emitterGui = (emitter, gui) ->
   gui.add emitter, "_flowQuantity", 0, 100, 5
+  gui.add emitter, "frequency", 0, 1 * SECOND, 50
+  gui.add emitter, "lifespan", 0, BUNNY_LIFESPAN, 100
+  gui.add emitter, "makeBunnies"
+  gui.add emitter, "maxParticles"
+  gui.add emitter, "removeAll"
   gui.add emitter, "on"
   gui
 
@@ -93,7 +100,8 @@ pluginGui = (plugin, gui) ->
       world = @world
       @add.image 0, 0, "sky"
       emitter = @emitter = @add.emitter(world.bounds.left, world.centerY, BUNNY_COUNT)
-      emitter.makeParticles "bunny"
+      emitter.makeBunnies = @emitterMakeBunnies.bind emitter
+      emitter.makeBunnies()
       emitter.flow BUNNY_LIFESPAN, BUNNY_INTERVAL, BUNNIES_PER_EMIT
       @add.tween(emitter).to { emitX: world.width }, 2000, Phaser.Easing.Sinusoidal.InOut, yes, 0, -1, yes
       @gui = new dat.GUI width: 320
@@ -114,5 +122,9 @@ pluginGui = (plugin, gui) ->
 
     shutdown: ->
       @gui.destroy()
+      return
+
+    emitterMakeBunnies: ->
+      @makeParticles "bunny", null, @maxParticles
       return
 )
