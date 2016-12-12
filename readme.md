@@ -48,6 +48,11 @@ Text
 
 Shows game FPS.
 
+Debug Methods
+-------------
+
+[Debug display can be slow in WebGL](https://phaser.io/docs/2.6.2/Phaser.Utils.Debug.html).
+
 ![debug.gameInfo() and debug.gameTimeInfo() output](https://samme.github.io/phaser-plugin-advanced-timing/screenshots/debug.png)
 
 Game Loop
@@ -55,24 +60,24 @@ Game Loop
 
 `game.debug.gameInfo(x, y)` prints
 
-  - game.forceSingleUpdate
-  - game.lastCount
-  - game.lockRender
-  - game.renderType
-  - game.spiraling
-  - game.updatesThisFrame
+  - [game.forceSingleUpdate][1]
+  - game._lastCount: “how many ‘catch-up’ iterations were used on the logic update last frame”
+  - [game.lockRender](http://phaser.io/docs/2.6.2/Phaser.Game.html#lockRender)
+  - [game.renderType](http://phaser.io/docs/2.6.2/Phaser.Game.html#renderType)
+  - game._spiraling: “if the ‘catch-up’ iterations are spiraling out of control, this counter is incremented”
+  - [game.updatesThisFrame](http://phaser.io/docs/2.6.2/Phaser.Game.html#updatesThisFrame): “number of logic updates expected to occur this render frame; will be 1 unless there are catch-ups required (and allowed)”
 
 Game Clock
 ----------
 
 `game.debug.gameTimeInfo(x, y)` prints
 
-  - game.time.desiredFps
-  - game.time.elapsed (and range)
-  - game.time.elapsedMS
-  - game.time.fps (and range)
-  - game.time.physicsElapsedMS
-  - game.time.slowMotion
-  - game.time.suggestedFps
+  - [game.time.desiredFps](http://phaser.io/docs/2.6.2/Phaser.Time.html#desiredFps)
+  - [game.time.elapsed](http://phaser.io/docs/2.6.2/Phaser.Time.html#elapsed) (and range)
+  - [game.time.elapsedMS](http://phaser.io/docs/2.6.2/Phaser.Time.html#elapsedMS)
+  - [game.time.fps](http://phaser.io/docs/2.6.2/Phaser.Time.html#fps) (and range)
+  - [game.time.physicsElapsedMS](http://phaser.io/docs/2.6.2/Phaser.Time.html#physicsElapsedMS)
+  - [game.time.slowMotion](http://phaser.io/docs/2.6.2/Phaser.Time.html#slowMotion)
+  - [game.time.suggestedFps](http://phaser.io/docs/2.6.2/Phaser.Time.html#suggestedFps)
 
 [1]: http://phaser.io/docs/2.6.2/Phaser.Game.html#forceSingleUpdate
