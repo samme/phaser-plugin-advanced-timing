@@ -4,10 +4,11 @@
 
 {SECOND} = Phaser.Timer
 
-BUNNY_COUNT = 1e3
-BUNNY_LIFESPAN = 4000
+BUNNY_COUNT = 1e4
+BUNNY_LIFESPAN = 10 * SECOND
 BUNNY_INTERVAL = 100
 BUNNIES_PER_EMIT = 10
+RENDER_MODE = Phaser.CANVAS
 
 debugSettings =
   "debug.gameInfo()": no
@@ -21,7 +22,7 @@ debugSettingsGui = (_debugSettings, gui) ->
 emitterGui = (emitter, gui) ->
   gui.add emitter, "_flowQuantity", 0, 100, 5
   gui.add emitter, "frequency", 0, 1 * SECOND, 50
-  gui.add emitter, "lifespan", 0, BUNNY_LIFESPAN, 100
+  gui.add emitter, "lifespan", 0, 10 * SECOND, 100
   gui.add emitter, "makeBunnies"
   gui.add emitter, "maxParticles"
   gui.add emitter, "removeAll"
@@ -66,19 +67,20 @@ pluginGui = (plugin, gui) ->
 @GAME = new Phaser.Game(
 
   antialias: on
-  height: 600
-  renderer: Phaser.AUTO
+  height: window.innerHeight
+  renderer: RENDER_MODE
   resolution: 1
-  scaleMode: Phaser.ScaleManager.SHOW_ALL
-  width: 600
+  scaleMode: Phaser.ScaleManager.NO_SCALE
+  width: window.innerWidth
 
   state:
 
     init: ->
       {game} = this
       unless game.timing
-        game.timing = game.plugins.add Phaser.Plugin.AdvancedTiming
-        # game.timing = game.plugins.add Phaser.Plugin.AdvancedTiming, mode: "graph"
+        # game.timing = game.plugins.add Phaser.Plugin.AdvancedTiming
+        game.timing = game.plugins.add Phaser.Plugin.AdvancedTiming, mode: "meter"
+        game.timing.meters.scale.set 3
       game.clearBeforeRender = off
       game.forceSingleUpdate = off
       game.debug.font = "12px monospace"
@@ -98,7 +100,9 @@ pluginGui = (plugin, gui) ->
 
     create: ->
       world = @world
-      @add.image 0, 0, "sky"
+      sky = @add.image 0, 0, "sky"
+      sky.height = world.height
+      sky.width = world.width
       emitter = @emitter = @add.emitter(world.bounds.left, world.centerY, BUNNY_COUNT)
       emitter.makeBunnies = @emitterMakeBunnies.bind emitter
       emitter.makeBunnies()

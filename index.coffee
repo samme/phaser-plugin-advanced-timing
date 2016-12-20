@@ -4,6 +4,8 @@
 
 {isFinite} = Number
 
+now = window.performance?.now.bind(window.performance) or Date.now.bind(Date)
+
 Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
 
   @MODE_GRAPH = "graph"
@@ -16,7 +18,6 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
     BLUE:   "#0074D9"
     GRAY:   "#666666"
     GREEN:  "#2ECC40"
-    LIME:   "#01FF70"
     NAVY:   "#001F3F"
     ORANGE: "#FF851B"
     PURPLE: "#B10DC9"
@@ -29,7 +30,11 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
     BLUE:   0x0074D9
     GRAY:   0x666666
     GREEN:  0x2ECC40
-    LIME:   0x01FF70
+    NAVY:   0x001F3F
+    ORANGE: 0xFF851B
+    PURPLE: 0xB10DC9
+    RED:    0xFF4136
+    WHITE:  0xFFFFFF
     YELLOW: 0xFFDC00
 
   @modes = [
@@ -42,9 +47,13 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
   @renderTypes = [null, "CANVAS", "WEBGL", "HEADLESS"]
 
   alpha: 0.75
-
   enableResumeHandler: yes
-
+  name: "Advanced Timing Plugin"
+  renderDuration: 0
+  timeAtPostRender: 0
+  timeAtPostUpdate: 0
+  timeAtPreUpdate: 0
+  updateDuration: 0
   _mode: null
 
   Object.defineProperty @prototype, "mode",
@@ -62,11 +71,11 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
       @refresh()
       @_mode
 
-  name: "Advanced Timing Plugin"
-
   init: (options) ->
     {game} = this
     game.time.advancedTiming = on
+    @_gameUpdateLogic = @game.updateLogic.bind @game
+    @_gameUpdateRender = @game.updateRender.bind @game
     @group = game.make.group null, "advancedTimingPlugin", yes
     @position = new Phaser.Point
     @renderType = @constructor.renderTypes[game.renderType]
@@ -82,12 +91,26 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
     @mode = mode or @constructor.MODE_DEFAULT
     return
 
+  preUpdate: ->
+    @timeAtPreUpdate = now()
+    return
+
   update: ->
     @group.visible = @visible
     if @visible
       @updateGraph()  if @graphGroup and @graphGroup.visible
       @updateMeters() if @meters     and @meters.visible
       @updateText()   if @text       and @text.visible
+    return
+
+  postUpdate: ->
+    @timeAtPostUpdate = now()
+    @updateDuration = @timeAtPostUpdate - @timeAtPreUpdate
+    # @updateDuration = @timeAtPreUpdate - @game.time.prevTime
+    return
+
+  postRender: ->
+    @renderDuration = now() - @timeAtPostUpdate
     return
 
   destroy: ->
@@ -132,6 +155,13 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
 
     return
 
+  addMeter: (name, x, y, key, tint) ->
+    name = "#{name}Meter"
+    meter = @meters.create x, y, key
+    meter.height = 10
+    meter.tint = tint
+    this[name] = meter
+
   addMeters: (x = @position.x, y = @position.y) ->
     {hexColors} = @constructor
 
@@ -145,25 +175,13 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
     @meters.x = x
     @meters.y = y
 
-    @desiredFpsMeter = @meters.create 0, 0, px
-    @desiredFpsMeter.height = 10
-    @desiredFpsMeter.tint = hexColors.GRAY
-
-    @fpsMeter = @meters.create 0, 0, px
-    @fpsMeter.height = 10
-    @fpsMeter.tint = hexColors.BLUE
-
-    @desiredMsMeter = @meters.create 0, 10, px
-    @desiredMsMeter.height = 10
-    @desiredMsMeter.tint = hexColors.GRAY
-
-    @elapsedMeter = @meters.create 0, 10, px
-    @elapsedMeter.height = 10
-    @elapsedMeter.tint = hexColors.GREEN
-
-    @msMeter = @meters.create 0, 10, px
-    @msMeter.height = 10
-    @msMeter.tint = hexColors.YELLOW
+    @addMeter "desiredFps",     0, 0,  px, hexColors.GRAY
+    @addMeter "fps",            0, 0,  px, hexColors.BLUE
+    @addMeter "desiredMs",      0, 10, px, hexColors.GRAY
+    @addMeter "elapsed",        0, 10, px, hexColors.GREEN
+    @addMeter "ms",             0, 10, px, hexColors.YELLOW
+    @addMeter "updateDuration", 0, 20, px, hexColors.ORANGE
+    @addMeter "renderDuration", 0, 20, px, hexColors.PURPLE
 
     @display[ @constructor.MODE_METER ] = @meters
 
@@ -277,6 +295,8 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
       graph.rect graphX, (height - elapsedMS),        1, 1, colors.YELLOW
     unless forceSingleUpdate
       graph.rect graphX, (height - updatesThisFrame), 1, 1, colors.NAVY
+    graph.rect graphX, (height - ~~@updateDuration),  1, 1, colors.ORANGE
+    graph.rect graphX, (height - ~~@renderDuration),  1, 1, colors.PURPLE
     if _spiraling > 0
       graph.rect graphX, (height - _spiraling),       1, 1, colors.RED
 
@@ -291,12 +311,17 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
     @desiredMsMeter.scale.x = @desiredMs()
     @msMeter.scale.x = elapsedMS
     @elapsedMeter.scale.x = elapsed
+    @updateDurationMeter.scale.x = @updateDuration
+    @renderDurationMeter.scale.x = @renderDuration
+    @renderDurationMeter.x = @updateDurationMeter.width
     return
 
   updateText: ->
     # {desiredFps, elapsed, elapsedMS, fps} = @game.time
     {fps} = @game.time
     # @text.text = "#{fps} fps #{elapsed} ms (#{elapsedMS} ms)"
-    @text.text = "#{fps} fps"
+    @text.text = "#{fps} fps
+      #{@updateDuration.toFixed 1}ms
+      #{@renderDuration.toFixed 1}ms"
     @text.style.fill = @fpsColor fps
     return
