@@ -7,7 +7,7 @@
     "prestart": "open index.html",
     "start": "coffeebar --watch .",
     "preversion": "eslint .",
-    "pub": "np --no-cleanup --no-publish"
+    "pub": "np --no-cleanup"
   },
   "author": "samme",
   "license": "MIT",
