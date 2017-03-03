@@ -4,7 +4,7 @@
 
 {isFinite} = Number
 
-Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
+class Phaser.Plugin.AdvancedTiming extends Phaser.Plugin
 
   @MODE_GRAPH = "graph"
   @MODE_METER = "meter"
@@ -136,8 +136,6 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
     {hexColors} = @constructor
 
     bt = @game.make.bitmapData(1, 1).fill(255, 255, 255)
-    px = bt.generateTexture "advancedTimingPlugin:pixel"
-    bt.destroy()
 
     @meters = @game.add.group @group, "advancedTimingPluginMeters"
     @meters.alpha = @alpha
@@ -145,23 +143,23 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
     @meters.x = x
     @meters.y = y
 
-    @desiredFpsMeter = @meters.create 0, 0, px
+    @desiredFpsMeter = @meters.create 0, 0, bt
     @desiredFpsMeter.height = 10
     @desiredFpsMeter.tint = hexColors.GRAY
 
-    @fpsMeter = @meters.create 0, 0, px
+    @fpsMeter = @meters.create 0, 0, bt
     @fpsMeter.height = 10
     @fpsMeter.tint = hexColors.BLUE
 
-    @desiredMsMeter = @meters.create 0, 10, px
+    @desiredMsMeter = @meters.create 0, 10, bt
     @desiredMsMeter.height = 10
     @desiredMsMeter.tint = hexColors.GRAY
 
-    @elapsedMeter = @meters.create 0, 10, px
+    @elapsedMeter = @meters.create 0, 10, bt
     @elapsedMeter.height = 10
     @elapsedMeter.tint = hexColors.GREEN
 
-    @msMeter = @meters.create 0, 10, px
+    @msMeter = @meters.create 0, 10, bt
     @msMeter.height = 10
     @msMeter.tint = hexColors.YELLOW
 
@@ -297,6 +295,6 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
     # {desiredFps, elapsed, elapsedMS, fps} = @game.time
     {fps} = @game.time
     # @text.text = "#{fps} fps #{elapsed} ms (#{elapsedMS} ms)"
-    @text.text = "#{fps} fps"
+    @text.text = "#{fps} fps #{@renderType}"
     @text.style.fill = @fpsColor fps
     return
