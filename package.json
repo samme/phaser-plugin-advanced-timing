@@ -4,7 +4,10 @@
   "description": "Shows FPS, frame intervals, and performance info",
   "main": "index.js",
   "scripts": {
-    "start": "coffeebar --watch ."
+    "prestart": "open index.html",
+    "start": "coffeebar --watch .",
+    "preversion": "eslint .",
+    "pub": "np --no-cleanup --no-publish"
   },
   "author": "samme",
   "license": "MIT",
