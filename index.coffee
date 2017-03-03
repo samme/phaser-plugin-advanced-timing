@@ -50,9 +50,6 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
   enableResumeHandler: yes
   name: "Advanced Timing Plugin"
   renderDuration: 0
-  timeAtPostRender: 0
-  timeAtPostUpdate: 0
-  timeAtPreUpdate: 0
   updateDuration: 0
   _mode: null
 
@@ -74,8 +71,10 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
   init: (options) ->
     {game} = this
     game.time.advancedTiming = on
-    @_gameUpdateLogic = @game.updateLogic.bind @game
+    @_gameUpdateLogic  = @game.updateLogic .bind @game
     @_gameUpdateRender = @game.updateRender.bind @game
+    @game.updateLogic  = @updateLogic .bind this
+    @game.updateRender = @updateRender.bind this
     @group = game.make.group null, "advancedTimingPlugin", yes
     @position = new Phaser.Point
     @renderType = @constructor.renderTypes[game.renderType]
@@ -91,10 +90,6 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
     @mode = mode or @constructor.MODE_DEFAULT
     return
 
-  preUpdate: ->
-    @timeAtPreUpdate = now()
-    return
-
   update: ->
     @group.visible = @visible
     if @visible
@@ -103,14 +98,16 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
       @updateText()   if @text       and @text.visible
     return
 
-  postUpdate: ->
-    @timeAtPostUpdate = now()
-    @updateDuration = @timeAtPostUpdate - @timeAtPreUpdate
-    # @updateDuration = @timeAtPreUpdate - @game.time.prevTime
+  updateLogic: (timeStep) ->
+    time = now()
+    @_gameUpdateLogic timeStep
+    @updateDuration = now() - time
     return
 
-  postRender: ->
-    @renderDuration = now() - @timeAtPostUpdate
+  updateRender: (elapsedTime) ->
+    time = now()
+    @_gameUpdateRender elapsedTime
+    @renderDuration = now() - time
     return
 
   destroy: ->

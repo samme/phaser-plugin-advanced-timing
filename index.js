@@ -31,7 +31,6 @@
       BLUE: "#0074D9",
       GRAY: "#666666",
       GREEN: "#2ECC40",
-      LIME: "#01FF70",
       NAVY: "#001F3F",
       ORANGE: "#FF851B",
       PURPLE: "#B10DC9",
@@ -45,9 +44,11 @@
       BLUE: 0x0074D9,
       GRAY: 0x666666,
       GREEN: 0x2ECC40,
-      LIME: 0x01FF70,
+      NAVY: 0x001F3F,
       ORANGE: 0xFF851B,
       PURPLE: 0xB10DC9,
+      RED: 0xFF4136,
+      WHITE: 0xFFFFFF,
       YELLOW: 0xFFDC00
     };
 
@@ -58,6 +59,12 @@
     AdvancedTimingPlugin.prototype.alpha = 0.75;
 
     AdvancedTimingPlugin.prototype.enableResumeHandler = true;
+
+    AdvancedTimingPlugin.prototype.name = "Advanced Timing Plugin";
+
+    AdvancedTimingPlugin.prototype.renderDuration = 0;
+
+    AdvancedTimingPlugin.prototype.updateDuration = 0;
 
     AdvancedTimingPlugin.prototype._mode = null;
 
@@ -85,24 +92,14 @@
       }
     });
 
-    AdvancedTimingPlugin.prototype.name = "Advanced Timing Plugin";
-
-    AdvancedTimingPlugin.prototype.renderDuration = 0;
-
-    AdvancedTimingPlugin.prototype.timeAtPostRender = 0;
-
-    AdvancedTimingPlugin.prototype.timeAtPostUpdate = 0;
-
-    AdvancedTimingPlugin.prototype.timeAtPreUpdate = 0;
-
-    AdvancedTimingPlugin.prototype.updateDuration = 0;
-
     AdvancedTimingPlugin.prototype.init = function(options) {
       var game, mode;
       game = this.game;
       game.time.advancedTiming = true;
       this._gameUpdateLogic = this.game.updateLogic.bind(this.game);
       this._gameUpdateRender = this.game.updateRender.bind(this.game);
+      this.game.updateLogic = this.updateLogic.bind(this);
+      this.game.updateRender = this.updateRender.bind(this);
       this.group = game.make.group(null, "advancedTimingPlugin", true);
       this.position = new Phaser.Point;
       this.renderType = this.constructor.renderTypes[game.renderType];
@@ -117,10 +114,6 @@
         Phaser.Utils.extend(this, options);
       }
       this.mode = mode || this.constructor.MODE_DEFAULT;
-    };
-
-    AdvancedTimingPlugin.prototype.preUpdate = function() {
-      this.timeAtPreUpdate = now();
     };
 
     AdvancedTimingPlugin.prototype.update = function() {
@@ -138,13 +131,18 @@
       }
     };
 
-    AdvancedTimingPlugin.prototype.postUpdate = function() {
-      this.timeAtPostUpdate = now();
-      this.updateDuration = this.timeAtPostUpdate - this.timeAtPreUpdate;
+    AdvancedTimingPlugin.prototype.updateLogic = function(timeStep) {
+      var time;
+      time = now();
+      this._gameUpdateLogic(timeStep);
+      this.updateDuration = now() - time;
     };
 
-    AdvancedTimingPlugin.prototype.postRender = function() {
-      this.renderDuration = now() - this.timeAtPostUpdate;
+    AdvancedTimingPlugin.prototype.updateRender = function(elapsedTime) {
+      var time;
+      time = now();
+      this._gameUpdateRender(elapsedTime);
+      this.renderDuration = now() - time;
     };
 
     AdvancedTimingPlugin.prototype.destroy = function() {
