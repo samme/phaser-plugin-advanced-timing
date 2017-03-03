@@ -1,5 +1,7 @@
 *.coffee
-.eslintrc.*
+*.html
+*.png
+bower.json
 example/
 index.html
 screenshots/
