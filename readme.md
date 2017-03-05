@@ -1,26 +1,23 @@
-Phaser Advanced Timing Plugin
-=============================
-
-Shows FPS, frame intervals, and performance info.
-
 ```javascript
 game.plugins.add(Phaser.Plugin.AdvancedTiming);
+// The default display ('text') shows FPS and render type
 
-// Configure (optional)
-
+// You can set the display mode at startup:
+// Example: graph display
 game.plugins.add(Phaser.Plugin.AdvancedTiming, {mode: 'graph'});
+// Example: meter display
+game.plugins.add(Phaser.Plugin.AdvancedTiming, {mode: 'meter'});
 
-// Save a reference (optional)
-
+// You can save a reference to set/switch modes later
 var plugin = game.plugins.add(Phaser.Plugin.AdvancedTiming);
+// …
+plugin.mode = 'text';
 ```
 
 Graph
 -----
 
 ![Graph Mode](https://samme.github.io/phaser-plugin-advanced-timing/screenshots/graph.png)
-
-    plugin.mode = 'graph';
 
 Plots values for the last 60 updates:
 
@@ -30,23 +27,31 @@ Plots values for the last 60 updates:
   - spiraling        (red)
   - updatesThisFrame (dark blue; only when [forceSingleUpdate][1] is off)
 
+```javascript
+plugin.mode = 'graph';
+```
+
 Meter
 -----
 
 ![Meter Mode](https://samme.github.io/phaser-plugin-advanced-timing/screenshots/meter.png)
 
-    plugin.mode = 'meter';
-
 Shows FPS (blue) and frame intervals (yellow: elapsedMS; green: elapsed).
+
+```javascript
+plugin.mode = 'meter';
+```
 
 Text
 ----
 
 ![Text Mode](https://samme.github.io/phaser-plugin-advanced-timing/screenshots/text.png)
 
-    plugin.mode = 'text'; // (default mode)
+Shows game FPS and render type.
 
-Shows game FPS.
+```javascript
+plugin.mode = 'text'; // (default mode)
+```
 
 Debug Methods
 -------------
