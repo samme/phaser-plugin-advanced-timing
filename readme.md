@@ -1,3 +1,5 @@
+[Demo](https://samme.github.io/phaser-plugin-advanced-timing/)
+
 ```javascript
 game.plugins.add(Phaser.Plugin.AdvancedTiming);
 // The default display ('text') shows FPS and render type
