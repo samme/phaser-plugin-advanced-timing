@@ -214,7 +214,7 @@
     };
 
     AdvancedTimingPlugin.prototype.addMeters = function(x, y) {
-      var bt, hexColors, px;
+      var bt, hexColors;
       if (x == null) {
         x = this.position.x;
       }
@@ -223,20 +223,19 @@
       }
       hexColors = this.constructor.hexColors;
       bt = this.game.make.bitmapData(1, 1).fill(255, 255, 255);
-      px = bt.generateTexture("advancedTimingPlugin:pixel");
-      bt.destroy();
       this.meters = this.game.add.group(this.group, "advancedTimingPluginMeters");
       this.meters.alpha = this.alpha;
       this.meters.classType = Phaser.Image;
       this.meters.x = x;
       this.meters.y = y;
-      this.addMeter("desiredFps", 0, 0, px, hexColors.GRAY);
-      this.addMeter("fps", 0, 0, px, hexColors.BLUE);
-      this.addMeter("desiredMs", 0, 10, px, hexColors.GRAY);
-      this.addMeter("elapsed", 0, 10, px, hexColors.GREEN);
-      this.addMeter("ms", 0, 10, px, hexColors.YELLOW);
-      this.addMeter("updateDuration", 0, 20, px, hexColors.ORANGE);
-      this.addMeter("renderDuration", 0, 20, px, hexColors.PURPLE);
+      this.addMeter("desiredFps", 0, 0, bt, hexColors.GRAY);
+      this.addMeter("fps", 0, 0, bt, hexColors.BLUE);
+      this.addMeter("desiredMs", 0, 10, bt, hexColors.GRAY);
+      this.addMeter("elapsed", 0, 10, bt, hexColors.GREEN);
+      this.addMeter("ms", 0, 10, bt, hexColors.YELLOW);
+      this.addMeter("desiredDur", 0, 20, bt, hexColors.GRAY);
+      this.addMeter("updateDuration", 0, 20, bt, hexColors.ORANGE);
+      this.addMeter("renderDuration", 0, 20, bt, hexColors.PURPLE);
       this.display[this.constructor.MODE_METER] = this.meters;
     };
 
@@ -404,13 +403,15 @@
     };
 
     AdvancedTimingPlugin.prototype.updateMeters = function() {
-      var desiredFps, elapsed, elapsedMS, fps, ref1;
+      var desiredFps, desiredMs, elapsed, elapsedMS, fps, ref1;
       ref1 = this.game.time, desiredFps = ref1.desiredFps, elapsed = ref1.elapsed, elapsedMS = ref1.elapsedMS, fps = ref1.fps;
+      desiredMs = this.desiredMs();
       this.desiredFpsMeter.scale.x = desiredFps;
       this.fpsMeter.scale.x = fps;
-      this.desiredMsMeter.scale.x = this.desiredMs();
+      this.desiredMsMeter.scale.x = desiredMs;
       this.msMeter.scale.x = elapsedMS;
       this.elapsedMeter.scale.x = elapsed;
+      this.desiredDurMeter.scale.x = desiredMs;
       this.updateDurationMeter.scale.x = this.updateDuration;
       this.renderDurationMeter.scale.x = this.renderDuration;
       this.renderDurationMeter.x = this.updateDurationMeter.width;

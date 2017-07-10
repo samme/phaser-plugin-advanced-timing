@@ -163,8 +163,6 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
     {hexColors} = @constructor
 
     bt = @game.make.bitmapData(1, 1).fill(255, 255, 255)
-    px = bt.generateTexture "advancedTimingPlugin:pixel"
-    bt.destroy()
 
     @meters = @game.add.group @group, "advancedTimingPluginMeters"
     @meters.alpha = @alpha
@@ -172,13 +170,14 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
     @meters.x = x
     @meters.y = y
 
-    @addMeter "desiredFps",     0, 0,  px, hexColors.GRAY
-    @addMeter "fps",            0, 0,  px, hexColors.BLUE
-    @addMeter "desiredMs",      0, 10, px, hexColors.GRAY
-    @addMeter "elapsed",        0, 10, px, hexColors.GREEN
-    @addMeter "ms",             0, 10, px, hexColors.YELLOW
-    @addMeter "updateDuration", 0, 20, px, hexColors.ORANGE
-    @addMeter "renderDuration", 0, 20, px, hexColors.PURPLE
+    @addMeter "desiredFps",     0, 0,  bt, hexColors.GRAY
+    @addMeter "fps",            0, 0,  bt, hexColors.BLUE
+    @addMeter "desiredMs",      0, 10, bt, hexColors.GRAY
+    @addMeter "elapsed",        0, 10, bt, hexColors.GREEN
+    @addMeter "ms",             0, 10, bt, hexColors.YELLOW
+    @addMeter "desiredDur",     0, 20, bt, hexColors.GRAY
+    @addMeter "updateDuration", 0, 20, bt, hexColors.ORANGE
+    @addMeter "renderDuration", 0, 20, bt, hexColors.PURPLE
 
     @display[ @constructor.MODE_METER ] = @meters
 
@@ -303,11 +302,13 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
 
   updateMeters: ->
     {desiredFps, elapsed, elapsedMS, fps} = @game.time
+    desiredMs = @desiredMs()
     @desiredFpsMeter.scale.x = desiredFps
     @fpsMeter.scale.x = fps
-    @desiredMsMeter.scale.x = @desiredMs()
+    @desiredMsMeter.scale.x = desiredMs
     @msMeter.scale.x = elapsedMS
     @elapsedMeter.scale.x = elapsed
+    @desiredDurMeter.scale.x = desiredMs
     @updateDurationMeter.scale.x = @updateDuration
     @renderDurationMeter.scale.x = @renderDuration
     @renderDurationMeter.x = @updateDurationMeter.width
