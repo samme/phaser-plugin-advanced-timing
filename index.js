@@ -64,6 +64,12 @@
 
     AdvancedTimingPlugin.prototype.renderDuration = 0;
 
+    AdvancedTimingPlugin.prototype.showDurations = true;
+
+    AdvancedTimingPlugin.prototype.showElapsed = false;
+
+    AdvancedTimingPlugin.prototype.showSpiraling = true;
+
     AdvancedTimingPlugin.prototype.updateDuration = 0;
 
     AdvancedTimingPlugin.prototype._mode = null;
@@ -384,18 +390,22 @@
       if (fps <= height) {
         graph.rect(graphX, height - fps, 1, 1, colors.BLUE);
       }
-      if (elapsed <= height) {
-        graph.rect(graphX, height - elapsed, 1, 1, colors.GREEN);
+      if (this.showElapsed) {
+        if (elapsed <= height) {
+          graph.rect(graphX, height - elapsed, 1, 1, colors.GREEN);
+        }
+        if (elapsed !== elapsedMS && elapsed <= height) {
+          graph.rect(graphX, height - elapsedMS, 1, 1, colors.YELLOW);
+        }
+        if (!forceSingleUpdate) {
+          graph.rect(graphX, height - updatesThisFrame, 1, 1, colors.NAVY);
+        }
       }
-      if (elapsed !== elapsedMS && elapsed <= height) {
-        graph.rect(graphX, height - elapsedMS, 1, 1, colors.YELLOW);
+      if (this.showDurations) {
+        graph.rect(graphX, height - ~~this.updateDuration, 1, 1, colors.ORANGE);
+        graph.rect(graphX, height - ~~this.renderDuration, 1, 1, colors.PURPLE);
       }
-      if (!forceSingleUpdate) {
-        graph.rect(graphX, height - updatesThisFrame, 1, 1, colors.NAVY);
-      }
-      graph.rect(graphX, height - ~~this.updateDuration, 1, 1, colors.ORANGE);
-      graph.rect(graphX, height - ~~this.renderDuration, 1, 1, colors.PURPLE);
-      if (_spiraling > 0) {
+      if (this.showSpiraling && _spiraling > 0) {
         graph.rect(graphX, height - _spiraling, 1, 1, colors.RED);
       }
       this.graphX += 1;
@@ -408,13 +418,17 @@
       desiredMs = this.desiredMs();
       this.desiredFpsMeter.scale.x = desiredFps;
       this.fpsMeter.scale.x = fps;
-      this.desiredMsMeter.scale.x = desiredMs;
-      this.msMeter.scale.x = elapsedMS;
-      this.elapsedMeter.scale.x = elapsed;
-      this.desiredDurMeter.scale.x = desiredMs;
-      this.updateDurationMeter.scale.x = this.updateDuration;
-      this.renderDurationMeter.scale.x = this.renderDuration;
-      this.renderDurationMeter.x = this.updateDurationMeter.width;
+      if (this.showElapsed) {
+        this.desiredMsMeter.scale.x = desiredMs;
+        this.msMeter.scale.x = elapsedMS;
+        this.elapsedMeter.scale.x = elapsed;
+      }
+      if (this.showDurations) {
+        this.desiredDurMeter.scale.x = desiredMs;
+        this.updateDurationMeter.scale.x = this.updateDuration;
+        this.renderDurationMeter.scale.x = this.renderDuration;
+        this.renderDurationMeter.x = this.updateDurationMeter.width;
+      }
     };
 
     AdvancedTimingPlugin.prototype.updateText = function() {

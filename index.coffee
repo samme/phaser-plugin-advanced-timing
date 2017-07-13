@@ -50,6 +50,9 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
   enableResumeHandler: yes
   name: "Advanced Timing Plugin"
   renderDuration: 0
+  showDurations: yes
+  showElapsed: no
+  showSpiraling: yes
   updateDuration: 0
   _mode: null
 
@@ -285,15 +288,20 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
 
     if fps <= height
       graph.rect graphX, (height - fps),              1, 1, colors.BLUE
-    if elapsed <= height
-      graph.rect graphX, (height - elapsed),          1, 1, colors.GREEN
-    if elapsed isnt elapsedMS and elapsed <= height
-      graph.rect graphX, (height - elapsedMS),        1, 1, colors.YELLOW
-    unless forceSingleUpdate
-      graph.rect graphX, (height - updatesThisFrame), 1, 1, colors.NAVY
-    graph.rect graphX, (height - ~~@updateDuration),  1, 1, colors.ORANGE
-    graph.rect graphX, (height - ~~@renderDuration),  1, 1, colors.PURPLE
-    if _spiraling > 0
+
+    if @showElapsed
+      if elapsed <= height
+        graph.rect graphX, (height - elapsed),          1, 1, colors.GREEN
+      if elapsed isnt elapsedMS and elapsed <= height
+        graph.rect graphX, (height - elapsedMS),        1, 1, colors.YELLOW
+      unless forceSingleUpdate
+        graph.rect graphX, (height - updatesThisFrame), 1, 1, colors.NAVY
+
+    if @showDurations
+      graph.rect graphX, (height - ~~@updateDuration),  1, 1, colors.ORANGE
+      graph.rect graphX, (height - ~~@renderDuration),  1, 1, colors.PURPLE
+
+    if @showSpiraling and _spiraling > 0
       graph.rect graphX, (height - _spiraling),       1, 1, colors.RED
 
     @graphX += 1
@@ -302,16 +310,23 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
 
   updateMeters: ->
     {desiredFps, elapsed, elapsedMS, fps} = @game.time
+
     desiredMs = @desiredMs()
+
     @desiredFpsMeter.scale.x = desiredFps
     @fpsMeter.scale.x = fps
-    @desiredMsMeter.scale.x = desiredMs
-    @msMeter.scale.x = elapsedMS
-    @elapsedMeter.scale.x = elapsed
-    @desiredDurMeter.scale.x = desiredMs
-    @updateDurationMeter.scale.x = @updateDuration
-    @renderDurationMeter.scale.x = @renderDuration
-    @renderDurationMeter.x = @updateDurationMeter.width
+
+    if @showElapsed
+      @desiredMsMeter.scale.x = desiredMs
+      @msMeter.scale.x = elapsedMS
+      @elapsedMeter.scale.x = elapsed
+
+    if @showDurations
+      @desiredDurMeter.scale.x = desiredMs
+      @updateDurationMeter.scale.x = @updateDuration
+      @renderDurationMeter.scale.x = @renderDuration
+      @renderDurationMeter.x = @updateDurationMeter.width
+
     return
 
   updateText: ->
