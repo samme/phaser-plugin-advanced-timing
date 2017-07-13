@@ -332,9 +332,12 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
   updateText: ->
     # {desiredFps, elapsed, elapsedMS, fps} = @game.time
     {fps} = @game.time
+    {drawCount} = @game.renderer.renderSession
     # @text.text = "#{fps} fps #{elapsed} ms (#{elapsedMS} ms)"
     @text.text = "#{fps} fps
-      #{@updateDuration.toFixed 1}ms
-      #{@renderDuration.toFixed 1}ms"
+      (#{@game.updatesThisFrame})
+      #{~~@updateDuration}ms
+      #{~~@renderDuration}ms
+      #{@renderType}" + (if drawCount then " (#{drawCount})" else "")
     @text.style.fill = @fpsColor fps
     return

@@ -432,9 +432,10 @@
     };
 
     AdvancedTimingPlugin.prototype.updateText = function() {
-      var fps;
+      var drawCount, fps;
       fps = this.game.time.fps;
-      this.text.text = fps + " fps " + (this.updateDuration.toFixed(1)) + "ms " + (this.renderDuration.toFixed(1)) + "ms";
+      drawCount = this.game.renderer.renderSession.drawCount;
+      this.text.text = (fps + " fps (" + this.game.updatesThisFrame + ") " + (~~this.updateDuration) + "ms " + (~~this.renderDuration) + "ms " + this.renderType) + (drawCount ? " (" + drawCount + ")" : "");
       this.text.style.fill = this.fpsColor(fps);
     };
 
