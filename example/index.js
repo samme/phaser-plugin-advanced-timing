@@ -15,7 +15,7 @@
 
   BUNNIES_PER_EMIT = 10;
 
-  RENDER_MODE = Phaser.CANVAS;
+  RENDER_MODE = Phaser.WEBGL;
 
   debugSettings = {
     "debug.gameInfo()": false,
@@ -82,6 +82,9 @@
     gui.add(plugin, "mode", constructor.modes);
     gui.add(plugin, "reset");
     gui.add(plugin, "visible");
+    gui.add(plugin, "showElapsed");
+    gui.add(plugin, "showDurations");
+    gui.add(plugin, "showSpiraling");
     return gui;
   };
 
@@ -104,8 +107,8 @@
         }
         game.clearBeforeRender = false;
         game.forceSingleUpdate = false;
-        game.debug.font = "12px monospace";
-        game.debug.lineHeight = 15;
+        game.debug.font = "24px monospace";
+        game.debug.lineHeight = 30;
         game.scale.fullScreenScaleMode = game.scale.scaleMode;
         game.scale.parentIsWindow = true;
         game.tweens.frameBased = true;
