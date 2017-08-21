@@ -11,6 +11,8 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
   @MODE_GRAPH = "graph"
   @MODE_METER = "meter"
   @MODE_TEXT = "text"
+  @MODE_DOM_METER = "domMeter"
+  @MODE_DOM_TEXT = "domText"
   @MODE_DEFAULT = @MODE_TEXT
 
   @colors =
@@ -42,12 +44,15 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
     @MODE_GRAPH
     @MODE_METER
     @MODE_TEXT
+    @MODE_DOM_METER
+    @MODE_DOM_TEXT
   ]
 
   @renderTypes = [null, "CANVAS", "WEBGL", "HEADLESS"]
 
   alpha: 0.75
   enableResumeHandler: yes
+  lastTextContent: null
   name: "Advanced Timing Plugin"
   renderDuration: 0
   showDurations: yes
@@ -62,7 +67,7 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
     set: (val) ->
       return @_mode if val is @_mode
       switch val
-        when @constructor.MODE_GRAPH, @constructor.MODE_METER, @constructor.MODE_TEXT
+        when @constructor.MODE_GRAPH, @constructor.MODE_METER, @constructor.MODE_TEXT, @constructor.MODE_DOM_TEXT, @constructor.MODE_DOM_METER
           @_mode = val
           @add()
           @activeDisplay = @display[ @_mode ]
@@ -99,6 +104,8 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
       @updateGraph()  if @graphGroup and @graphGroup.visible
       @updateMeters() if @meters     and @meters.visible
       @updateText()   if @text       and @text.visible
+      @updateDomMeter() if @domMeter
+      @updateDomText() if @domText
     return
 
   updateLogic: (timeStep) ->
@@ -124,7 +131,31 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
       when @constructor.MODE_GRAPH then @addGraph()  unless @graphGroup
       when @constructor.MODE_METER then @addMeters() unless @meters
       when @constructor.MODE_TEXT  then @addText()   unless @text
+      when @constructor.MODE_DOM_METER then @addDomMeter() unless @domMeter
+      when @constructor.MODE_DOM_TEXT then @addDomText() unless @domText
       else throw new Error "Nothing to add (bad mode: #{@_mode})"
+    return
+
+  addDomMeter: ->
+    @domMeter = document.createElement 'meter'
+    @domMeter.setAttribute 'class', 'ppat-fps ppat-meter'
+    @domMeter.setAttribute 'min', 0
+    @domMeter.setAttribute 'max', @game.time.desiredFps
+    @domMeter.setAttribute 'optimum', @game.time.desiredFps
+    @game.canvas.parentNode.appendChild @domMeter;
+
+    @display[ @constructor.MODE_DOM_METER ] = @domMeter
+
+    return
+
+  addDomText: ->
+    @domText = document.createElement 'tt'
+    @domText.setAttribute 'class', 'ppat-text'
+    @domText.style.font = @game.debug.font
+    @game.canvas.parentNode.appendChild @domText;
+
+    @display[ @constructor.MODE_DOM_TEXT ] = @domText
+
     return
 
   addGraph: (x = @position.x, y = @position.y) ->
@@ -260,7 +291,13 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
 
   refresh: ->
     for name, obj of @display
-      obj.visible = name is @_mode
+      if obj.setAttribute
+        if name is @_mode
+          obj.removeAttribute "hidden"
+        else
+          obj.setAttribute "hidden", ""
+      else
+        obj.visible = name is @_mode
     return
 
   reset: (fpsMin = Infinity, fpsMax = 0, msMin = Infinity, msMax = 0) ->
@@ -274,6 +311,23 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
   resetElapsed: ->
     {time} = @game
     time.elapsed = time.now - time.prevTime
+    return
+
+  textContent: ->
+    {drawCount} = @game.renderer.renderSession
+    "#{@game.time.fps} fps #{@renderType}" + (if drawCount then " (#{drawCount})" else "")
+
+  updateDomMeter: ->
+    @domMeter.value = @game.time.fps
+    return
+
+  updateDomText: ->
+    content = @textContent()
+
+    unless content is @lastTextContent
+      @domText.textContent = @lastTextContent = content
+      @domText.style.color = @fpsColor()
+
     return
 
   updateGraph: ->
@@ -330,14 +384,6 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
     return
 
   updateText: ->
-    # {desiredFps, elapsed, elapsedMS, fps} = @game.time
-    {fps} = @game.time
-    {drawCount} = @game.renderer.renderSession
-    # @text.text = "#{fps} fps #{elapsed} ms (#{elapsedMS} ms)"
-    @text.text = "#{fps} fps
-      (#{@game.updatesThisFrame})
-      #{~~@updateDuration}ms
-      #{~~@renderDuration}ms
-      #{@renderType}" + (if drawCount then " (#{drawCount})" else "")
-    @text.style.fill = @fpsColor fps
+    @text.text = @textContent()
+    @text.style.fill = @fpsColor()
     return

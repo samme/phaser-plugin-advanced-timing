@@ -24,6 +24,10 @@
 
     AdvancedTimingPlugin.MODE_TEXT = "text";
 
+    AdvancedTimingPlugin.MODE_DOM_METER = "domMeter";
+
+    AdvancedTimingPlugin.MODE_DOM_TEXT = "domText";
+
     AdvancedTimingPlugin.MODE_DEFAULT = AdvancedTimingPlugin.MODE_TEXT;
 
     AdvancedTimingPlugin.colors = {
@@ -52,13 +56,15 @@
       YELLOW: 0xFFDC00
     };
 
-    AdvancedTimingPlugin.modes = [AdvancedTimingPlugin.MODE_DEFAULT, AdvancedTimingPlugin.MODE_GRAPH, AdvancedTimingPlugin.MODE_METER, AdvancedTimingPlugin.MODE_TEXT];
+    AdvancedTimingPlugin.modes = [AdvancedTimingPlugin.MODE_DEFAULT, AdvancedTimingPlugin.MODE_GRAPH, AdvancedTimingPlugin.MODE_METER, AdvancedTimingPlugin.MODE_TEXT, AdvancedTimingPlugin.MODE_DOM_METER, AdvancedTimingPlugin.MODE_DOM_TEXT];
 
     AdvancedTimingPlugin.renderTypes = [null, "CANVAS", "WEBGL", "HEADLESS"];
 
     AdvancedTimingPlugin.prototype.alpha = 0.75;
 
     AdvancedTimingPlugin.prototype.enableResumeHandler = true;
+
+    AdvancedTimingPlugin.prototype.lastTextContent = null;
 
     AdvancedTimingPlugin.prototype.name = "Advanced Timing Plugin";
 
@@ -86,6 +92,8 @@
           case this.constructor.MODE_GRAPH:
           case this.constructor.MODE_METER:
           case this.constructor.MODE_TEXT:
+          case this.constructor.MODE_DOM_TEXT:
+          case this.constructor.MODE_DOM_METER:
             this._mode = val;
             this.add();
             this.activeDisplay = this.display[this._mode];
@@ -134,6 +142,12 @@
         if (this.text && this.text.visible) {
           this.updateText();
         }
+        if (this.domMeter) {
+          this.updateDomMeter();
+        }
+        if (this.domText) {
+          this.updateDomText();
+        }
       }
     };
 
@@ -174,9 +188,37 @@
             this.addText();
           }
           break;
+        case this.constructor.MODE_DOM_METER:
+          if (!this.domMeter) {
+            this.addDomMeter();
+          }
+          break;
+        case this.constructor.MODE_DOM_TEXT:
+          if (!this.domText) {
+            this.addDomText();
+          }
+          break;
         default:
           throw new Error("Nothing to add (bad mode: " + this._mode + ")");
       }
+    };
+
+    AdvancedTimingPlugin.prototype.addDomMeter = function() {
+      this.domMeter = document.createElement('meter');
+      this.domMeter.setAttribute('class', 'ppat-fps ppat-meter');
+      this.domMeter.setAttribute('min', 0);
+      this.domMeter.setAttribute('max', this.game.time.desiredFps);
+      this.domMeter.setAttribute('optimum', this.game.time.desiredFps);
+      this.game.canvas.parentNode.appendChild(this.domMeter);
+      this.display[this.constructor.MODE_DOM_METER] = this.domMeter;
+    };
+
+    AdvancedTimingPlugin.prototype.addDomText = function() {
+      this.domText = document.createElement('tt');
+      this.domText.setAttribute('class', 'ppat-text');
+      this.domText.style.font = this.game.debug.font;
+      this.game.canvas.parentNode.appendChild(this.domText);
+      this.display[this.constructor.MODE_DOM_TEXT] = this.domText;
     };
 
     AdvancedTimingPlugin.prototype.addGraph = function(x, y) {
@@ -347,7 +389,15 @@
       ref1 = this.display;
       for (name in ref1) {
         obj = ref1[name];
-        obj.visible = name === this._mode;
+        if (obj.setAttribute) {
+          if (name === this._mode) {
+            obj.removeAttribute("hidden");
+          } else {
+            obj.setAttribute("hidden", "");
+          }
+        } else {
+          obj.visible = name === this._mode;
+        }
       }
     };
 
@@ -376,6 +426,25 @@
       var time;
       time = this.game.time;
       time.elapsed = time.now - time.prevTime;
+    };
+
+    AdvancedTimingPlugin.prototype.textContent = function() {
+      var drawCount;
+      drawCount = this.game.renderer.renderSession.drawCount;
+      return (this.game.time.fps + " fps " + this.renderType) + (drawCount ? " (" + drawCount + ")" : "");
+    };
+
+    AdvancedTimingPlugin.prototype.updateDomMeter = function() {
+      this.domMeter.value = this.game.time.fps;
+    };
+
+    AdvancedTimingPlugin.prototype.updateDomText = function() {
+      var content;
+      content = this.textContent();
+      if (content !== this.lastTextContent) {
+        this.domText.textContent = this.lastTextContent = content;
+        this.domText.style.color = this.fpsColor();
+      }
     };
 
     AdvancedTimingPlugin.prototype.updateGraph = function() {
@@ -432,11 +501,8 @@
     };
 
     AdvancedTimingPlugin.prototype.updateText = function() {
-      var drawCount, fps;
-      fps = this.game.time.fps;
-      drawCount = this.game.renderer.renderSession.drawCount;
-      this.text.text = (fps + " fps (" + this.game.updatesThisFrame + ") " + (~~this.updateDuration) + "ms " + (~~this.renderDuration) + "ms " + this.renderType) + (drawCount ? " (" + drawCount + ")" : "");
-      this.text.style.fill = this.fpsColor(fps);
+      this.text.text = this.textContent();
+      this.text.style.fill = this.fpsColor();
     };
 
     return AdvancedTimingPlugin;
