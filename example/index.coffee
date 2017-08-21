@@ -84,16 +84,16 @@ pluginGui = (plugin, gui) ->
       {game} = this
       game.clearBeforeRender = off
       game.forceSingleUpdate = off
-      game.debug.font = "24px monospace"
-      game.debug.lineHeight = 30
+      game.debug.font = "16px monospace"
+      game.debug.lineHeight = 20
       game.scale.fullScreenScaleMode = game.scale.scaleMode
       game.scale.parentIsWindow = yes
       game.tweens.frameBased = on
       game.input.destroy()
       unless game.timing
-        # game.timing = game.plugins.add Phaser.Plugin.AdvancedTiming
-        game.timing = game.plugins.add Phaser.Plugin.AdvancedTiming, mode: "domText"
-        # game.timing.meters.scale.set 3
+        game.timing = game.plugins.add Phaser.Plugin.AdvancedTiming
+        # game.timing = game.plugins.add Phaser.Plugin.AdvancedTiming, mode: "domText"
+        # game.timing.meters.scale.set 2
       return
 
     preload: ->

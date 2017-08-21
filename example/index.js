@@ -102,16 +102,14 @@
         game = this.game;
         game.clearBeforeRender = false;
         game.forceSingleUpdate = false;
-        game.debug.font = "24px monospace";
-        game.debug.lineHeight = 30;
+        game.debug.font = "16px monospace";
+        game.debug.lineHeight = 20;
         game.scale.fullScreenScaleMode = game.scale.scaleMode;
         game.scale.parentIsWindow = true;
         game.tweens.frameBased = true;
         game.input.destroy();
         if (!game.timing) {
-          game.timing = game.plugins.add(Phaser.Plugin.AdvancedTiming, {
-            mode: "domText"
-          });
+          game.timing = game.plugins.add(Phaser.Plugin.AdvancedTiming);
         }
       },
       preload: function() {
