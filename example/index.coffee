@@ -25,6 +25,8 @@ emitterGui = (emitter, gui) ->
   gui.add emitter, "lifespan", 0, 10 * SECOND, 100
   gui.add emitter, "makeBunnies"
   gui.add emitter, "maxParticles"
+  gui.add emitter, "length"
+    .listen()
   gui.add emitter, "removeAll"
   gui.add emitter, "on"
   gui
@@ -80,10 +82,6 @@ pluginGui = (plugin, gui) ->
 
     init: ->
       {game} = this
-      unless game.timing
-        # game.timing = game.plugins.add Phaser.Plugin.AdvancedTiming
-        game.timing = game.plugins.add Phaser.Plugin.AdvancedTiming, mode: "meter"
-        game.timing.meters.scale.set 3
       game.clearBeforeRender = off
       game.forceSingleUpdate = off
       game.debug.font = "24px monospace"
@@ -92,6 +90,10 @@ pluginGui = (plugin, gui) ->
       game.scale.parentIsWindow = yes
       game.tweens.frameBased = on
       game.input.destroy()
+      unless game.timing
+        # game.timing = game.plugins.add Phaser.Plugin.AdvancedTiming
+        game.timing = game.plugins.add Phaser.Plugin.AdvancedTiming, mode: "domText"
+        # game.timing.meters.scale.set 3
       return
 
     preload: ->

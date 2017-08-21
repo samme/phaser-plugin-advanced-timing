@@ -38,6 +38,7 @@
     gui.add(emitter, "lifespan", 0, 10 * SECOND, 100);
     gui.add(emitter, "makeBunnies");
     gui.add(emitter, "maxParticles");
+    gui.add(emitter, "length").listen();
     gui.add(emitter, "removeAll");
     gui.add(emitter, "on");
     return gui;
@@ -99,12 +100,6 @@
       init: function() {
         var game;
         game = this.game;
-        if (!game.timing) {
-          game.timing = game.plugins.add(Phaser.Plugin.AdvancedTiming, {
-            mode: "meter"
-          });
-          game.timing.meters.scale.set(3);
-        }
         game.clearBeforeRender = false;
         game.forceSingleUpdate = false;
         game.debug.font = "24px monospace";
@@ -113,6 +108,11 @@
         game.scale.parentIsWindow = true;
         game.tweens.frameBased = true;
         game.input.destroy();
+        if (!game.timing) {
+          game.timing = game.plugins.add(Phaser.Plugin.AdvancedTiming, {
+            mode: "domText"
+          });
+        }
       },
       preload: function() {
         this.load.baseURL = "https://examples.phaser.io/assets/";
