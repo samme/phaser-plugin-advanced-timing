@@ -48,7 +48,7 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
     @MODE_DOM_TEXT
   ]
 
-  @renderTypes = [null, "CANVAS", "WEBGL", "HEADLESS"]
+  @renderTypes = [null, "Canvas", "WebGL", "Headless"]
 
   alpha: 0.75
   enableResumeHandler: yes
@@ -58,6 +58,7 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
   showDurations: yes
   showElapsed: no
   showSpiraling: yes
+  styleDomTextLikeDebugFont: no
   updateDuration: 0
   _mode: null
 
@@ -149,9 +150,9 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
     return
 
   addDomText: ->
-    @domText = document.createElement 'tt'
+    @domText = document.createElement 'pre'
     @domText.setAttribute 'class', 'ppat-text'
-    @domText.style.font = @game.debug.font
+    @domText.style.font = @game.debug.font if @styleDomTextLikeDebugFont
     @game.canvas.parentNode.appendChild @domText;
 
     @display[ @constructor.MODE_DOM_TEXT ] = @domText
@@ -186,9 +187,9 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
 
     return
 
-  addMeter: (name, x, y, key, tint) ->
+  addMeter: (name, x, y, key, tint, group) ->
     name = "#{name}Meter"
-    meter = @meters.create x, y, key
+    meter = group.create x, y, key
     meter.height = 10
     meter.tint = tint
     this[name] = meter
@@ -204,14 +205,18 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
     @meters.x = x
     @meters.y = y
 
-    @addMeter "desiredFps",     0, 0,  bt, hexColors.GRAY
-    @addMeter "fps",            0, 0,  bt, hexColors.BLUE
-    @addMeter "desiredMs",      0, 10, bt, hexColors.GRAY
-    @addMeter "elapsed",        0, 10, bt, hexColors.GREEN
-    @addMeter "ms",             0, 10, bt, hexColors.YELLOW
-    @addMeter "desiredDur",     0, 20, bt, hexColors.GRAY
-    @addMeter "updateDuration", 0, 20, bt, hexColors.ORANGE
-    @addMeter "renderDuration", 0, 20, bt, hexColors.PURPLE
+    @fpsMeters = @game.add.group @meters, "advancedTimingPluginFpsMeters"
+    @elapsedMeters = @game.add.group @meters, "advancedTimingPluginElapsedMeters"
+    @durationMeters = @game.add.group @meters, "advancedTimingPluginDurationMeters"
+
+    @addMeter "desiredFps",     0, 0,  bt, hexColors.GRAY,   @fpsMeters
+    @addMeter "fps",            0, 0,  bt, hexColors.BLUE,   @fpsMeters
+    @addMeter "desiredMs",      0, 20, bt, hexColors.GRAY,   @elapsedMeters
+    @addMeter "elapsed",        0, 20, bt, hexColors.GREEN,  @elapsedMeters
+    @addMeter "ms",             0, 20, bt, hexColors.YELLOW, @elapsedMeters
+    @addMeter "desiredDur",     0, 10, bt, hexColors.GRAY,   @durationMeters
+    @addMeter "updateDuration", 0, 10, bt, hexColors.ORANGE, @durationMeters
+    @addMeter "renderDuration", 0, 10, bt, hexColors.PURPLE, @durationMeters
 
     @display[ @constructor.MODE_METER ] = @meters
 
@@ -370,11 +375,13 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
     @desiredFpsMeter.scale.x = desiredFps
     @fpsMeter.scale.x = fps
 
+    @elapsedMeters.visible = @showElapsed
     if @showElapsed
       @desiredMsMeter.scale.x = desiredMs
       @msMeter.scale.x = elapsedMS
       @elapsedMeter.scale.x = elapsed
 
+    @durationMeters.visible = @showDurations
     if @showDurations
       @desiredDurMeter.scale.x = desiredMs
       @updateDurationMeter.scale.x = @updateDuration

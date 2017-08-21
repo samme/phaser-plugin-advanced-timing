@@ -58,7 +58,7 @@
 
     AdvancedTimingPlugin.modes = [AdvancedTimingPlugin.MODE_DEFAULT, AdvancedTimingPlugin.MODE_GRAPH, AdvancedTimingPlugin.MODE_METER, AdvancedTimingPlugin.MODE_TEXT, AdvancedTimingPlugin.MODE_DOM_METER, AdvancedTimingPlugin.MODE_DOM_TEXT];
 
-    AdvancedTimingPlugin.renderTypes = [null, "CANVAS", "WEBGL", "HEADLESS"];
+    AdvancedTimingPlugin.renderTypes = [null, "Canvas", "WebGL", "Headless"];
 
     AdvancedTimingPlugin.prototype.alpha = 0.75;
 
@@ -75,6 +75,8 @@
     AdvancedTimingPlugin.prototype.showElapsed = false;
 
     AdvancedTimingPlugin.prototype.showSpiraling = true;
+
+    AdvancedTimingPlugin.prototype.styleDomTextLikeDebugFont = false;
 
     AdvancedTimingPlugin.prototype.updateDuration = 0;
 
@@ -214,9 +216,11 @@
     };
 
     AdvancedTimingPlugin.prototype.addDomText = function() {
-      this.domText = document.createElement('tt');
+      this.domText = document.createElement('pre');
       this.domText.setAttribute('class', 'ppat-text');
-      this.domText.style.font = this.game.debug.font;
+      if (this.styleDomTextLikeDebugFont) {
+        this.domText.style.font = this.game.debug.font;
+      }
       this.game.canvas.parentNode.appendChild(this.domText);
       this.display[this.constructor.MODE_DOM_TEXT] = this.domText;
     };
@@ -252,10 +256,10 @@
       this.display[this.constructor.MODE_GRAPH] = this.graphGroup;
     };
 
-    AdvancedTimingPlugin.prototype.addMeter = function(name, x, y, key, tint) {
+    AdvancedTimingPlugin.prototype.addMeter = function(name, x, y, key, tint, group) {
       var meter;
       name = name + "Meter";
-      meter = this.meters.create(x, y, key);
+      meter = group.create(x, y, key);
       meter.height = 10;
       meter.tint = tint;
       return this[name] = meter;
@@ -276,14 +280,17 @@
       this.meters.classType = Phaser.Image;
       this.meters.x = x;
       this.meters.y = y;
-      this.addMeter("desiredFps", 0, 0, bt, hexColors.GRAY);
-      this.addMeter("fps", 0, 0, bt, hexColors.BLUE);
-      this.addMeter("desiredMs", 0, 10, bt, hexColors.GRAY);
-      this.addMeter("elapsed", 0, 10, bt, hexColors.GREEN);
-      this.addMeter("ms", 0, 10, bt, hexColors.YELLOW);
-      this.addMeter("desiredDur", 0, 20, bt, hexColors.GRAY);
-      this.addMeter("updateDuration", 0, 20, bt, hexColors.ORANGE);
-      this.addMeter("renderDuration", 0, 20, bt, hexColors.PURPLE);
+      this.fpsMeters = this.game.add.group(this.meters, "advancedTimingPluginFpsMeters");
+      this.elapsedMeters = this.game.add.group(this.meters, "advancedTimingPluginElapsedMeters");
+      this.durationMeters = this.game.add.group(this.meters, "advancedTimingPluginDurationMeters");
+      this.addMeter("desiredFps", 0, 0, bt, hexColors.GRAY, this.fpsMeters);
+      this.addMeter("fps", 0, 0, bt, hexColors.BLUE, this.fpsMeters);
+      this.addMeter("desiredMs", 0, 20, bt, hexColors.GRAY, this.elapsedMeters);
+      this.addMeter("elapsed", 0, 20, bt, hexColors.GREEN, this.elapsedMeters);
+      this.addMeter("ms", 0, 20, bt, hexColors.YELLOW, this.elapsedMeters);
+      this.addMeter("desiredDur", 0, 10, bt, hexColors.GRAY, this.durationMeters);
+      this.addMeter("updateDuration", 0, 10, bt, hexColors.ORANGE, this.durationMeters);
+      this.addMeter("renderDuration", 0, 10, bt, hexColors.PURPLE, this.durationMeters);
       this.display[this.constructor.MODE_METER] = this.meters;
     };
 
@@ -487,11 +494,13 @@
       desiredMs = this.desiredMs();
       this.desiredFpsMeter.scale.x = desiredFps;
       this.fpsMeter.scale.x = fps;
+      this.elapsedMeters.visible = this.showElapsed;
       if (this.showElapsed) {
         this.desiredMsMeter.scale.x = desiredMs;
         this.msMeter.scale.x = elapsedMS;
         this.elapsedMeter.scale.x = elapsed;
       }
+      this.durationMeters.visible = this.showDurations;
       if (this.showDurations) {
         this.desiredDurMeter.scale.x = desiredMs;
         this.updateDurationMeter.scale.x = this.updateDuration;
