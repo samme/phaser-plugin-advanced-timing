@@ -56,7 +56,7 @@ plugin.mode = 'text';
 DOM Meter
 ---------
 
-![DOM Meter Mode](https://samme.github.io/phaser-plugin-advanced-timing/screenshots/domText.png)
+![DOM Meter Mode](https://samme.github.io/phaser-plugin-advanced-timing/screenshots/domMeter.png)
 
 Shows FPS. It can be styled as
 
