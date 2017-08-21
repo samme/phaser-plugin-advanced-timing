@@ -1,6 +1,6 @@
 {
   "name": "phaser-plugin-advanced-timing",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "description": "Shows FPS, frame intervals, draw count, and other performance info",
   "main": "index.js",
   "scripts": {
