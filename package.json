@@ -1,10 +1,13 @@
 {
   "name": "phaser-plugin-advanced-timing",
-  "version": "0.2.0",
+  "version": "0.3.2",
   "description": "Shows FPS, frame intervals, and performance info",
   "main": "index.js",
   "scripts": {
-    "start": "coffeebar --watch ."
+    "prestart": "open index.html",
+    "start": "coffeebar --watch .",
+    "preversion": "eslint .",
+    "pub": "np --no-cleanup"
   },
   "author": "samme",
   "license": "MIT",
