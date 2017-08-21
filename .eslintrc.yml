@@ -10,9 +10,9 @@ rules:
     - error
     - unix
   no-shadow:
-    - error
+    - warn
   no-unused-vars:
-    - error
+    - warn
   quotes:
     - error
     - double
