@@ -4,10 +4,11 @@
 
 {SECOND} = Phaser.Timer
 
-BUNNY_COUNT = 1e3
-BUNNY_LIFESPAN = 4000
+BUNNY_COUNT = 1e4
+BUNNY_LIFESPAN = 10 * SECOND
 BUNNY_INTERVAL = 100
 BUNNIES_PER_EMIT = 10
+RENDER_MODE = Phaser.WEBGL
 
 debugSettings =
   "debug.gameInfo()": no
@@ -21,9 +22,11 @@ debugSettingsGui = (_debugSettings, gui) ->
 emitterGui = (emitter, gui) ->
   gui.add emitter, "_flowQuantity", 0, 100, 5
   gui.add emitter, "frequency", 0, 1 * SECOND, 50
-  gui.add emitter, "lifespan", 0, BUNNY_LIFESPAN, 100
+  gui.add emitter, "lifespan", 0, 10 * SECOND, 100
   gui.add emitter, "makeBunnies"
   gui.add emitter, "maxParticles"
+  gui.add emitter, "length"
+    .listen()
   gui.add emitter, "removeAll"
   gui.add emitter, "on"
   gui
@@ -61,32 +64,36 @@ pluginGui = (plugin, gui) ->
   gui.add plugin, "mode", constructor.modes
   gui.add plugin, "reset"
   gui.add plugin, "visible"
+  gui.add plugin, "showElapsed"
+  gui.add plugin, "showDurations"
+  gui.add plugin, "showSpiraling"
   gui
 
 @GAME = new Phaser.Game(
 
   antialias: on
-  height: 600
-  renderer: Phaser.AUTO
+  height: window.innerHeight
+  renderer: RENDER_MODE
   resolution: 1
-  scaleMode: Phaser.ScaleManager.SHOW_ALL
-  width: 600
+  scaleMode: Phaser.ScaleManager.NO_SCALE
+  width: window.innerWidth
 
   state:
 
     init: ->
       {game} = this
-      unless game.timing
-        game.timing = game.plugins.add Phaser.Plugin.AdvancedTiming
-        # game.timing = game.plugins.add Phaser.Plugin.AdvancedTiming, mode: "graph"
       game.clearBeforeRender = off
       game.forceSingleUpdate = off
-      game.debug.font = "12px monospace"
-      game.debug.lineHeight = 15
+      game.debug.font = "16px monospace"
+      game.debug.lineHeight = 20
       game.scale.fullScreenScaleMode = game.scale.scaleMode
       game.scale.parentIsWindow = yes
       game.tweens.frameBased = on
       game.input.destroy()
+      unless game.timing
+        game.timing = game.plugins.add Phaser.Plugin.AdvancedTiming
+        # game.timing = game.plugins.add Phaser.Plugin.AdvancedTiming, mode: "domText"
+        # game.timing.meters.scale.set 2
       return
 
     preload: ->
@@ -98,7 +105,9 @@ pluginGui = (plugin, gui) ->
 
     create: ->
       world = @world
-      @add.image 0, 0, "sky"
+      sky = @add.image 0, 0, "sky"
+      sky.height = world.height
+      sky.width = world.width
       emitter = @emitter = @add.emitter(world.bounds.left, world.centerY, BUNNY_COUNT)
       emitter.makeBunnies = @emitterMakeBunnies.bind emitter
       emitter.makeBunnies()

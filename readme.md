@@ -1,19 +1,75 @@
-[Demo](https://samme.github.io/phaser-plugin-advanced-timing/)
+Shows FPS, frame intervals, draw count, and other performance info. [Demo](https://samme.github.io/phaser-plugin-advanced-timing/)
+
+Usage
+-----
 
 ```javascript
 game.plugins.add(Phaser.Plugin.AdvancedTiming);
-// The default display ('text') shows FPS and render type
-
-// You can set the display mode at startup:
-// Example: graph display
+// or
 game.plugins.add(Phaser.Plugin.AdvancedTiming, {mode: 'graph'});
-// Example: meter display
-game.plugins.add(Phaser.Plugin.AdvancedTiming, {mode: 'meter'});
+```
 
-// You can save a reference to set/switch modes later
+The display modes are `domMeter`, `domText`, `graph`, `meter`, and `text`. The default mode is `text`.
+
+You can save a reference to switch modes later:
+
+```javascript
 var plugin = game.plugins.add(Phaser.Plugin.AdvancedTiming);
 // …
 plugin.mode = 'text';
+```
+
+The plugin also provides two debug methods:
+
+```javascript
+game.debug.gameInfo(x, y);
+game.debug.gameTimeInfo(x, y);
+```
+
+Beware that [debug display can be slow in WebGL](https://phaser.io/docs/2.6.2/Phaser.Utils.Debug.html).
+
+DOM Text, Text
+--------------
+
+![Text Mode](https://samme.github.io/phaser-plugin-advanced-timing/screenshots/text.png)
+
+Both show FPS, render type, and WebGL draw count.
+
+`text` is drawn on the game canvas. `domText` is a separate HTML element.
+
+The `domText` element can be styled as
+
+```css
+.ppat-text {
+  position: absolute;
+  left: 0;
+  top: 0;
+  margin: 0;
+}
+```
+
+```javascript
+plugin.mode = 'domText';
+plugin.mode = 'text';
+```
+
+DOM Meter
+---------
+
+![DOM Meter Mode](https://samme.github.io/phaser-plugin-advanced-timing/screenshots/domText.png)
+
+Shows FPS. It can be styled as
+
+```css
+.ppat-fps {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+```
+
+```javascript
+plugin.mode = 'domMeter';
 ```
 
 Graph
@@ -24,8 +80,8 @@ Graph
 Plots values for the last 60 updates:
 
   - fps              (blue)
-  - elapsed          (green)
-  - elapsedMS        (yellow)
+  - update duration  (orange)
+  - render duration  (violet)
   - spiraling        (red)
   - updatesThisFrame (dark blue; only when [forceSingleUpdate][1] is off)
 
@@ -38,53 +94,40 @@ Meter
 
 ![Meter Mode](https://samme.github.io/phaser-plugin-advanced-timing/screenshots/meter.png)
 
-Shows FPS (blue) and frame intervals (yellow: elapsedMS; green: elapsed).
+Shows FPS (blue) and update duration (orange), and render duration (violet).
 
 ```javascript
 plugin.mode = 'meter';
 ```
 
-Text
-----
-
-![Text Mode](https://samme.github.io/phaser-plugin-advanced-timing/screenshots/text.png)
-
-Shows game FPS and render type.
-
-```javascript
-plugin.mode = 'text'; // (default mode)
-```
-
 Debug Methods
 -------------
 
-[Debug display can be slow in WebGL](https://phaser.io/docs/2.6.2/Phaser.Utils.Debug.html).
-
 ![debug.gameInfo() and debug.gameTimeInfo() output](https://samme.github.io/phaser-plugin-advanced-timing/screenshots/debug.png)
 
-Game Loop
----------
+debug.gameInfo
+--------------
 
 `game.debug.gameInfo(x, y)` prints
 
-  - [game.forceSingleUpdate][1]
-  - game._lastCount: “how many ‘catch-up’ iterations were used on the logic update last frame”
-  - [game.lockRender](http://phaser.io/docs/2.6.2/Phaser.Game.html#lockRender)
-  - [game.renderType](http://phaser.io/docs/2.6.2/Phaser.Game.html#renderType)
-  - game._spiraling: “if the ‘catch-up’ iterations are spiraling out of control, this counter is incremented”
-  - [game.updatesThisFrame](http://phaser.io/docs/2.6.2/Phaser.Game.html#updatesThisFrame): “number of logic updates expected to occur this render frame; will be 1 unless there are catch-ups required (and allowed)”
+- [game.forceSingleUpdate][1]
+- game._lastCount: “how many ‘catch-up’ iterations were used on the logic update last frame”
+- [game.lockRender](http://phaser.io/docs/2.6.2/Phaser.Game.html#lockRender)
+- [game.renderType](http://phaser.io/docs/2.6.2/Phaser.Game.html#renderType)
+- game._spiraling: “if the ‘catch-up’ iterations are spiraling out of control, this counter is incremented”
+- [game.updatesThisFrame](http://phaser.io/docs/2.6.2/Phaser.Game.html#updatesThisFrame): “number of logic updates expected to occur this render frame; will be 1 unless there are catch-ups required (and allowed)”
 
-Game Clock
-----------
+debug.gameTimeInfo
+------------------
 
 `game.debug.gameTimeInfo(x, y)` prints
 
-  - [game.time.desiredFps](http://phaser.io/docs/2.6.2/Phaser.Time.html#desiredFps)
-  - [game.time.elapsed](http://phaser.io/docs/2.6.2/Phaser.Time.html#elapsed) (and range)
-  - [game.time.elapsedMS](http://phaser.io/docs/2.6.2/Phaser.Time.html#elapsedMS)
-  - [game.time.fps](http://phaser.io/docs/2.6.2/Phaser.Time.html#fps) (and range)
-  - [game.time.physicsElapsedMS](http://phaser.io/docs/2.6.2/Phaser.Time.html#physicsElapsedMS)
-  - [game.time.slowMotion](http://phaser.io/docs/2.6.2/Phaser.Time.html#slowMotion)
-  - [game.time.suggestedFps](http://phaser.io/docs/2.6.2/Phaser.Time.html#suggestedFps)
+- [game.time.desiredFps](http://phaser.io/docs/2.6.2/Phaser.Time.html#desiredFps)
+- [game.time.elapsed](http://phaser.io/docs/2.6.2/Phaser.Time.html#elapsed) (and range)
+- [game.time.elapsedMS](http://phaser.io/docs/2.6.2/Phaser.Time.html#elapsedMS)
+- [game.time.fps](http://phaser.io/docs/2.6.2/Phaser.Time.html#fps) (and range)
+- [game.time.physicsElapsedMS](http://phaser.io/docs/2.6.2/Phaser.Time.html#physicsElapsedMS)
+- [game.time.slowMotion](http://phaser.io/docs/2.6.2/Phaser.Time.html#slowMotion)
+- [game.time.suggestedFps](http://phaser.io/docs/2.6.2/Phaser.Time.html#suggestedFps)
 
 [1]: http://phaser.io/docs/2.6.2/Phaser.Game.html#forceSingleUpdate
