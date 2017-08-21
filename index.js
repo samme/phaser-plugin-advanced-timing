@@ -206,18 +206,18 @@
     };
 
     AdvancedTimingPlugin.prototype.addDomMeter = function() {
-      this.domMeter = document.createElement('meter');
-      this.domMeter.setAttribute('class', 'ppat-fps ppat-meter');
-      this.domMeter.setAttribute('min', 0);
-      this.domMeter.setAttribute('max', this.game.time.desiredFps);
-      this.domMeter.setAttribute('optimum', this.game.time.desiredFps);
+      this.domMeter = document.createElement("meter");
+      this.domMeter.setAttribute("class", "ppat-fps ppat-meter");
+      this.domMeter.setAttribute("min", 0);
+      this.domMeter.setAttribute("max", this.game.time.desiredFps);
+      this.domMeter.setAttribute("optimum", this.game.time.desiredFps);
       this.game.canvas.parentNode.appendChild(this.domMeter);
       this.display[this.constructor.MODE_DOM_METER] = this.domMeter;
     };
 
     AdvancedTimingPlugin.prototype.addDomText = function() {
-      this.domText = document.createElement('pre');
-      this.domText.setAttribute('class', 'ppat-text');
+      this.domText = document.createElement("pre");
+      this.domText.setAttribute("class", "ppat-text");
       if (this.styleDomTextLikeDebugFont) {
         this.domText.style.font = this.game.debug.font;
       }

@@ -138,11 +138,11 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
     return
 
   addDomMeter: ->
-    @domMeter = document.createElement 'meter'
-    @domMeter.setAttribute 'class', 'ppat-fps ppat-meter'
-    @domMeter.setAttribute 'min', 0
-    @domMeter.setAttribute 'max', @game.time.desiredFps
-    @domMeter.setAttribute 'optimum', @game.time.desiredFps
+    @domMeter = document.createElement "meter"
+    @domMeter.setAttribute "class", "ppat-fps ppat-meter"
+    @domMeter.setAttribute "min", 0
+    @domMeter.setAttribute "max", @game.time.desiredFps
+    @domMeter.setAttribute "optimum", @game.time.desiredFps
     @game.canvas.parentNode.appendChild @domMeter;
 
     @display[ @constructor.MODE_DOM_METER ] = @domMeter
@@ -150,8 +150,8 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
     return
 
   addDomText: ->
-    @domText = document.createElement 'pre'
-    @domText.setAttribute 'class', 'ppat-text'
+    @domText = document.createElement "pre"
+    @domText.setAttribute "class", "ppat-text"
     @domText.style.font = @game.debug.font if @styleDomTextLikeDebugFont
     @game.canvas.parentNode.appendChild @domText;
 
