@@ -38,7 +38,7 @@ plugin.mode = 'text';
 
 ![Text Mode](https://samme.github.io/phaser-plugin-advanced-timing/screenshots/text.png)
 
-Both show FPS, render type, and WebGL draw count.
+Both show [FPS][fps], [render type][renderType], and WebGL draw count.
 
 `text` is drawn on the game canvas. `domText` is a separate HTML element.
 
@@ -63,7 +63,7 @@ plugin.mode = 'domMeter';
 
 ![DOM Meter Mode](https://samme.github.io/phaser-plugin-advanced-timing/screenshots/domMeter.png)
 
-Shows FPS. It can be styled as
+Shows [FPS](fps). It can be styled as
 
 ```css
 .ppat-fps {
@@ -84,11 +84,11 @@ plugin.mode = 'graph';
 
 Plots values for the last 60 updates:
 
-  - fps              (blue)
-  - update duration  (orange)
-  - render duration  (violet)
-  - spiraling        (red)
-  - updatesThisFrame (dark blue; only when [forceSingleUpdate][1] is off)
+  - [FPS](fps) (blue)
+  - [update duration][updateLogic] (orange)
+  - [render duration][updateRender] (violet)
+  - spiraling (red)
+  - [updatesThisFrame](updatesThisFrame) (dark blue; only when [forceSingleUpdate][forceSingleUpdate] is off)
 
 Meter
 -----
@@ -99,7 +99,7 @@ plugin.mode = 'meter';
 
 ![Meter Mode](https://samme.github.io/phaser-plugin-advanced-timing/screenshots/meter.png)
 
-Shows FPS (blue), update duration (orange), and render duration (violet).
+Shows [FPS](fps) (blue), [update duration][updateLogic] (orange), and [render duration][updateRender] (violet).
 
 Debug Methods
 -------------
@@ -115,23 +115,36 @@ game.debug.gameTimeInfo(x, y);
 
 Prints values for
 
-- [game.forceSingleUpdate][1]
+- [game.forceSingleUpdate][forceSingleUpdate]
 - `game._lastCount`: “how many ‘catch-up’ iterations were used on the logic update last frame”
-- [game.lockRender](http://phaser.io/docs/2.6.2/Phaser.Game.html#lockRender)
-- [game.renderType](http://phaser.io/docs/2.6.2/Phaser.Game.html#renderType)
+- [game.lockRender][lockRender]
+- [game.renderType][renderType]
 - `game._spiraling`: “if the ‘catch-up’ iterations are spiraling out of control, this counter is incremented”
-- [game.updatesThisFrame](http://phaser.io/docs/2.6.2/Phaser.Game.html#updatesThisFrame): “number of logic updates expected to occur this render frame; will be 1 unless there are catch-ups required (and allowed)”
+- [game.updatesThisFrame][updatesThisFrame]: “number of logic updates expected to occur this render frame; will be 1 unless there are catch-ups required (and allowed)”
 
 ### debug.gameTimeInfo()
 
 Prints values for
 
-- [game.time.desiredFps](http://phaser.io/docs/2.6.2/Phaser.Time.html#desiredFps)
-- [game.time.elapsed](http://phaser.io/docs/2.6.2/Phaser.Time.html#elapsed) (and range)
-- [game.time.elapsedMS](http://phaser.io/docs/2.6.2/Phaser.Time.html#elapsedMS)
-- [game.time.fps](http://phaser.io/docs/2.6.2/Phaser.Time.html#fps) (and range)
-- [game.time.physicsElapsedMS](http://phaser.io/docs/2.6.2/Phaser.Time.html#physicsElapsedMS)
-- [game.time.slowMotion](http://phaser.io/docs/2.6.2/Phaser.Time.html#slowMotion)
-- [game.time.suggestedFps](http://phaser.io/docs/2.6.2/Phaser.Time.html#suggestedFps)
+- [game.time.desiredFps][desiredFps]
+- [game.time.elapsed][elapsed] (and min–max range)
+- [game.time.elapsedMS][elapsedMS]
+- [game.time.fps][fps] (and min–max range)
+- [game.time.physicsElapsedMS][physicsElapsedMS]
+- [game.time.slowMotion][slowMotion]
+- [game.time.suggestedFps][suggestedFps]
 
-[1]: http://phaser.io/docs/2.6.2/Phaser.Game.html#forceSingleUpdate
+
+[desiredFps]: http://phaser.io/docs/2.6.2/Phaser.Time.html#desiredFps
+[elapsed]: http://phaser.io/docs/2.6.2/Phaser.Time.html#elapsed
+[elapsedMS]: http://phaser.io/docs/2.6.2/Phaser.Time.html#elapsedMS
+[forceSingleUpdate]: http://phaser.io/docs/2.6.2/Phaser.Game.html#forceSingleUpdate
+[fps]: http://phaser.io/docs/2.6.2/Phaser.Time.html#fps
+[lockRender]: http://phaser.io/docs/2.6.2/Phaser.Game.html#lockRender
+[physicsElapsedMS]: http://phaser.io/docs/2.6.2/Phaser.Time.html#physicsElapsedMS
+[renderType]: http://phaser.io/docs/2.6.2/Phaser.Game.html#renderType
+[slowMotion]: http://phaser.io/docs/2.6.2/Phaser.Time.html#slowMotion
+[suggestedFps]: http://phaser.io/docs/2.6.2/Phaser.Time.html#suggestedFps
+[updatesThisFrame]: http://phaser.io/docs/2.6.2/Phaser.Game.html#updatesThisFrame
+[updateLogic]: http://phaser.io/docs/2.6.2/Phaser.Game.html#updateLogic
+[updateRender]: http://phaser.io/docs/2.6.2/Phaser.Game.html#updateRender
