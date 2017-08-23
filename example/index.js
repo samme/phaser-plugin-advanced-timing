@@ -109,7 +109,7 @@
         game.tweens.frameBased = true;
         game.input.destroy();
         if (!game.timing) {
-          game.timing = game.plugins.add(Phaser.Plugin.AdvancedTiming);
+          game.timing = game.plugins.add(Phaser.Plugin.AdvancedTiming,{mode:"text",x:50,y:50,textSize:50});
         }
       },
       preload: function() {

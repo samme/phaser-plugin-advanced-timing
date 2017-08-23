@@ -224,7 +224,7 @@
     AdvancedTimingPlugin.prototype.addDomText = function() {
       this.domText = document.createElement("pre");
       this.domText.setAttribute("class", "ppat-text");
-      this.domText.setAttribute("style", "font-size:"+this.textSize);
+      this.domText.setAttribute("style", "font-size:"+this.textSize+"px");//chrome needs px?
       if (this.styleDomTextLikeDebugFont) {
         this.domText.style.font = this.game.debug.font;
       }
