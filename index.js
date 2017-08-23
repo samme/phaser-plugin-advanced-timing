@@ -59,9 +59,9 @@
     AdvancedTimingPlugin.modes = [AdvancedTimingPlugin.MODE_DEFAULT, AdvancedTimingPlugin.MODE_GRAPH, AdvancedTimingPlugin.MODE_METER, AdvancedTimingPlugin.MODE_TEXT, AdvancedTimingPlugin.MODE_DOM_METER, AdvancedTimingPlugin.MODE_DOM_TEXT];
 
     AdvancedTimingPlugin.renderTypes = [null, "Canvas", "WebGL", "Headless"];
-
+    
     AdvancedTimingPlugin.prototype.alpha = 0.75;
-
+    
     AdvancedTimingPlugin.prototype.enableResumeHandler = true;
 
     AdvancedTimingPlugin.prototype.lastTextContent = null;
@@ -109,7 +109,7 @@
     });
 
     AdvancedTimingPlugin.prototype.init = function(options) {
-      var game, mode;
+      var game, mode,x,y,textSize;
       game = this.game;
       game.time.advancedTiming = true;
       this._gameUpdateLogic = this.game.updateLogic.bind(this.game);
@@ -126,9 +126,15 @@
       this.display = {};
       if (options) {
         mode = options.mode;
-        delete options.mode;
+        x=options.x;
+        y=options.y;
+        textSize=options.textSize;
+        delete options.mode,options.x,options.y,options.textSize;
         Phaser.Utils.extend(this, options);
       }
+      this.position.x=x;
+      this.position.y=y;
+      this.textSize=textSize;
       this.mode = mode || this.constructor.MODE_DEFAULT;
     };
 
@@ -218,6 +224,7 @@
     AdvancedTimingPlugin.prototype.addDomText = function() {
       this.domText = document.createElement("pre");
       this.domText.setAttribute("class", "ppat-text");
+      this.domText.setAttribute("style", "font-size:"+this.textSize);
       if (this.styleDomTextLikeDebugFont) {
         this.domText.style.font = this.game.debug.font;
       }
@@ -303,7 +310,8 @@
       }
       this.text = this.game.add.text(x, y, null, {
         fill: this.constructor.colors.WHITE,
-        font: this.game.debug.font
+        font: this.game.debug.font,
+        fontSize: this.textSize
       }, this.group);
       this.text.name = "advancedTimingPluginText";
       this.display[this.constructor.MODE_TEXT] = this.text;
