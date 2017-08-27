@@ -5,9 +5,10 @@
   "main": "index.js",
   "scripts": {
     "prestart": "open index.html",
-    "start": "coffeebar --watch .",
+    "start": "coffeebar --watch * example/*",
     "preversion": "eslint .",
-    "pub": "np --no-cleanup"
+    "pub": "np --no-cleanup",
+    "update": "cp -v node_modules/phaser/build/phaser.js node_modules/dat.gui/build/dat.gui.js{,.map} example/vendor/"
   },
   "author": "samme",
   "license": "MIT",
@@ -22,7 +23,8 @@
     "phaser": "^2.6.2"
   },
   "devDependencies": {
-    "coffeebar": "^1.0.0"
+    "coffeebar": "^1.0.0",
+    "dat.gui": "github:dataarts/dat.gui"
   },
   "repository": {
     "type": "git",
