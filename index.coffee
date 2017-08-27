@@ -1,12 +1,14 @@
 "use strict"
 
-{Phaser} = this
+Phaser = Phaser or @Phaser or window.Phaser or require? "phaser"
+
+throw new Error "Couldn't find `Phaser` or require 'phaser'." unless Phaser
 
 {isFinite} = Number
 
 now = window.performance?.now.bind(window.performance) or Date.now.bind(Date)
 
-Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
+class Phaser.Plugin.AdvancedTiming extends Phaser.Plugin
 
   @MODE_GRAPH = "graph"
   @MODE_METER = "meter"
@@ -394,3 +396,5 @@ Phaser.Plugin.AdvancedTiming = class AdvancedTimingPlugin extends Phaser.Plugin
     @text.text = @textContent()
     @text.style.fill = @fpsColor()
     return
+
+module?.exports = Phaser.Plugin.AdvancedTiming
