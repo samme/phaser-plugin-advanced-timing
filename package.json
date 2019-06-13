@@ -8,7 +8,7 @@
     "start": "coffeebar --watch *.coffee example/*.coffee",
     "preversion": "eslint .",
     "pub": "np --no-cleanup",
-    "update": "cp -v node_modules/phaser/build/phaser.js node_modules/dat.gui/build/dat.gui.js{,.map} example/vendor/"
+    "update": "cp -v node_modules/phaser/build/phaser.js example/vendor/"
   },
   "author": "samme",
   "license": "MIT",
@@ -23,8 +23,7 @@
     "phaser": "^2.6.2"
   },
   "devDependencies": {
-    "coffeebar": "^1.0.0",
-    "dat.gui": "github:dataarts/dat.gui"
+    "coffeebar": "^1.0.0"
   },
   "repository": {
     "type": "git",
