@@ -6,7 +6,7 @@
   "scripts": {
     "prestart": "open index.html",
     "start": "coffeebar --watch *.coffee example/*.coffee",
-    "preversion": "eslint .",
+    "preversion": "node -c index.js",
     "pub": "np --no-cleanup",
     "update": "cp -v node_modules/phaser/build/phaser.js example/vendor/"
   },
